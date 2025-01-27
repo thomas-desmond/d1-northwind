@@ -1,7 +1,7 @@
-compatibility_date = "2022-04-05"
+compatibility_date = "2024-08-21"
 main = "index.ts"
 name = "northwind-worker"
-route = "api.northwind.d1sql.com/*"
+observability.logs.enabled = true
 
 [placement]
 mode = "smart"
@@ -9,4 +9,4 @@ mode = "smart"
 [[d1_databases]]
 binding = "DB"
 database_name = "northwind"
-database_id = "d5b1d127-1d3f-467e-953b-cbc69f0a9e06"
+database_id = "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"

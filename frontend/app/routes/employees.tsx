@@ -15,9 +15,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   const search = url.searchParams.get("search");
 
   const rand = Math.floor(Math.random() * 1000001);
+  console.log("NODE ENV: " , process.env.NODE_ENV)
   const path = `${
     process.env.NODE_ENV === "production"
-      ? "https://api.northwind.d1sql.com"
+      ? "https://northwind-worker.cf-tme.workers.dev"
       : "http://127.0.0.1:8787"
   }/api/employees?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
     search ? `&search=${search}` : ""
