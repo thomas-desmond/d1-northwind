@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://northwind-worker.cf-tme.workers.dev"
-      : "http://127.0.0.1:8787"
+      : "http://127.0.0.1:8789"
   }/api/employee?Id=${params.id}&rand=${rand}`;
 
   const res = await fetch(path);

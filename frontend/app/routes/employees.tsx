@@ -19,7 +19,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://northwind-worker.cf-tme.workers.dev"
-      : "http://127.0.0.1:8787"
+      : "http://127.0.0.1:8789"
   }/api/employees?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
     search ? `&search=${search}` : ""
   }&rand=${rand}`;

@@ -3,6 +3,9 @@ main = "index.ts"
 name = "northwind-worker"
 observability.logs.enabled = true
 
+[dev]
+port=8789
+
 [placement]
 mode = "smart"
 

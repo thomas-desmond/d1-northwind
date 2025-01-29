@@ -28,7 +28,7 @@ export default function Dash() {
     const path = `${
       process.env.NODE_ENV === "production"
         ? "https://northwind-worker.cf-tme.workers.dev"
-        : "http://127.0.0.1:8787"
+        : "http://127.0.0.1:8789"
     }/api/status`;
     fetch(path)
       .then((res) => res.json())

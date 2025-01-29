@@ -13,7 +13,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://northwind-worker.cf-tme.workers.dev"
-      : "http://127.0.0.1:8787"
+      : "http://127.0.0.1:8789"
   }/api/search?q=${keyword}&rand=${rand}&table=${table ?? "products"}`;
   const res = await fetch(path);
   const result = (await res.json()) as any;
