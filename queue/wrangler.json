@@ -23,7 +23,8 @@
 		],
 		"consumers": [
       {
-        "queue": "northwind-inventory-queue"
+        "queue": "northwind-inventory-queue",
+				"max_batch_timeout": 2
       }
     ]
 	}
