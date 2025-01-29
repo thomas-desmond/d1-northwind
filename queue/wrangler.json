@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "northwind-queue-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-24",
+  "observability": {
+    "enabled": true
+  },
+	"placement": { "mode": "smart" },
+	"d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "northwind",
+      "database_id": "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
+    }
+  ],
+	"queues": {
+		"producers": [
+			{
+				"queue": "northwind-inventory-queue",
+				"binding": "northwind_inventory_queue"
+			}
+		],
+		"consumers": [
+      {
+        "queue": "northwind-inventory-queue"
+      }
+    ]
+	}
+}
