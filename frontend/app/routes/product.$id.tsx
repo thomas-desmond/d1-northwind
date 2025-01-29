@@ -137,7 +137,7 @@ const Product = () => {
                 }}
                 className="button green mr-2"
               >
-                Update Inventory
+                Update Inventory By
               </button>
               <input
                 type="number"

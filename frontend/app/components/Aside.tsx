@@ -88,6 +88,15 @@ const Aside = () => {
                 <span className="menu-item-label">Search</span>
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/admin"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                <span className="icon material-icons">admin_panel_settings</span>
+                <span className="menu-item-label">Admin</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </aside>
