@@ -6,6 +6,7 @@ import { useStatsDispatch } from "~/components/StatsContext";
 import type { LoaderFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import invariant from "tiny-invariant";
+import { useState } from "react";
 
 export const loader: LoaderFunction = async ({ params }) => {
   invariant(params.id, "Missing id");
@@ -29,10 +30,42 @@ const Product = () => {
   const data = useLoaderData<LoaderType>();
   const { product } = data;
 
+  const [updateInventoryBy, setUpdateInventory] = useState(0);
+  const [localInventory, setLocalInventory] = useState(product.UnitsInStock);
+
   const dispatch = useStatsDispatch();
   useEffect(() => {
     dispatch && data.stats && dispatch(data.stats);
   }, [dispatch, data.stats]);
+
+  function handleUpdateInventory() {
+    const newInventory = localInventory + updateInventoryBy;
+    if (newInventory < 0) return;
+    setLocalInventory(newInventory);
+
+    const path = `${
+      process.env.NODE_ENV === "production"
+        ? "https://northwind-queue-worker.cf-tme.workers.dev"
+        : "http://127.0.0.1:8787"
+    }`;
+    fetch(path, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        updateInventoryBy: updateInventoryBy,
+        productId: product.Id,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
 
   return (
     <>
@@ -67,10 +100,7 @@ const Product = () => {
                 />
               </div>
               <div>
-                <AddTableField
-                  name="Units In Stock"
-                  value={product.UnitsInStock}
-                />
+                <AddTableField name="Units In Stock" value={localInventory} />
                 <AddTableField
                   name="Units In Order"
                   value={product.UnitsOnOrder}
@@ -100,6 +130,24 @@ const Product = () => {
                   Go back
                 </button>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  handleUpdateInventory();
+                }}
+                className="button green mr-2"
+              >
+                Update Inventory
+              </button>
+              <input
+                type="number"
+                placeholder="#"
+                className="input is-small"
+                style={{ width: "100px" }}
+                onChange={(e) => {
+                  setUpdateInventory(Number(e.target.value));
+                }}
+              />
             </div>
           </div>
         </div>
