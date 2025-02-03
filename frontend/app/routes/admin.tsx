@@ -38,7 +38,7 @@ export default function Admin() {
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                 onClick={make25InventoryUpdateCalls}
             >
-                Make 250 Calls
+                Make 250 Inventory Updates
             </button>
         </div>
     );
