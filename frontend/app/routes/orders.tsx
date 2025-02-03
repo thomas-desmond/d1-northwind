@@ -25,6 +25,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   const res = await fetch(path);
   const result = (await res.json()) as any;
 
+  console.log("resut ", result)
+
   return json({ ...result });
 };
 type LoaderType = Awaited<ReturnType<typeof loader>>;
@@ -43,6 +45,7 @@ interface Order {
 const Orders = () => {
   const data = useLoaderData<LoaderType>();
   const navigate = useNavigate();
+
   const { orders, page, pages } = data;
   const dispatch = useStatsDispatch();
 
@@ -53,6 +56,15 @@ const Orders = () => {
   const setPage = (page: number) => {
     navigate(`/orders?page=${page}`);
   };
+
+  if (data.error === 401) {
+    return (
+      <div className="card-content">
+        <h2>Unauthorized</h2>
+      </div>
+    );
+  }
+  
   return (
     <>
       {orders.length ? (
