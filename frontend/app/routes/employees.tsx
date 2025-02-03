@@ -15,7 +15,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   const search = url.searchParams.get("search");
 
   const rand = Math.floor(Math.random() * 1000001);
-  console.log("NODE ENV: " , process.env.NODE_ENV)
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://northwind-worker.cf-tme.workers.dev"

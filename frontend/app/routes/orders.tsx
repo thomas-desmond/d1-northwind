@@ -25,8 +25,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   const res = await fetch(path);
   const result = (await res.json()) as any;
 
-  console.log("resut ", result)
-
   return json({ ...result });
 };
 type LoaderType = Awaited<ReturnType<typeof loader>>;
