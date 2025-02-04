@@ -1,18 +1,36 @@
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, LoaderFunctionArgs, useNavigate } from "react-router-dom";
 import { Paginate } from "~/components";
 import type { LoaderFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { useStatsDispatch } from "~/components/StatsContext";
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({
+  context,
+  request,
+}: LoaderFunctionArgs) => {
   const url = new URL(request.url);
-
   const page = Number(url.searchParams.get("page")) || 1;
   const count = url.searchParams.get("count");
   const search = url.searchParams.get("search");
+  const tokenKey = url.searchParams.get("token") || "admin";
 
+  const jwtTokens = {
+    admin: context.JWT_ADMIN,
+    user: context.JWT_USER,
+    invalid: context.JWT_INVALID,
+  };
+
+  const token = jwtTokens[tokenKey as keyof typeof jwtTokens];
+
+  if (!token) {
+    return json({
+      error: "Unauthorized: Token not provided or invalid",
+      orders: [],
+      pages: 1,
+    });
+  }
   const rand = Math.floor(Math.random() * 1000001);
   const path = `${
     process.env.NODE_ENV === "production"
@@ -22,7 +40,16 @@ export const loader: LoaderFunction = async ({ request }) => {
     search ? `&search=${search}` : ""
   }&rand=${rand}`;
 
-  const res = await fetch(path);
+  const headers = { token: `${token}` };
+
+  const res = await fetch(path, { headers });
+  if (!res.ok) {
+    return json({
+      error: `Error: ${res.status} ${res.statusText}`,
+      orders: [],
+      pages: 1,
+    });
+  }
   const result = (await res.json()) as any;
 
   return json({ ...result });
@@ -42,6 +69,8 @@ interface Order {
 
 const Orders = () => {
   const data = useLoaderData<LoaderType>();
+  const [selectedToken, setSelectedToken] = useState("admin");
+
   const navigate = useNavigate();
 
   const { orders, page, pages } = data;
@@ -51,20 +80,55 @@ const Orders = () => {
     dispatch && data.stats && dispatch(data.stats);
   }, [dispatch, data.stats]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (token) {
+      setSelectedToken(token);
+    }
+  }, []);
+
   const setPage = (page: number) => {
-    navigate(`/orders?page=${page}`);
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", page.toString());
+    params.set("token", selectedToken);
+    navigate(`?${params.toString()}`);
   };
 
-  if (data.error === 401) {
-    return (
-      <div className="card-content">
-        <h2>Unauthorized</h2>
-      </div>
-    );
-  }
-  
+  const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedToken(event.target.value);
+    const params = new URLSearchParams(window.location.search);
+    params.set("token", event.target.value);
+    navigate(`?${params.toString()}`);
+  };
+
   return (
     <>
+      <div>
+        <label className="mr-2">Log In As:</label>
+        {[
+          { key: "admin", label: "Administrator" },
+          { key: "user", label: "User 'Around The Horn'" },
+          { key: "invalid", label: "Invalid User" },
+        ].map(({ key, label }) => (
+          <label key={key} className="radio-inline mr-2">
+            <input
+              type="radio"
+              name="token"
+              value={key}
+              checked={selectedToken === key}
+              onChange={handleTokenChange}
+              className="mr-1"
+            />
+            {label}
+          </label>
+        ))}
+      </div>
+      {data.error && (
+        <div className="card-content">
+          <h2>{data.error}</h2>
+        </div>
+      )}
       {orders.length ? (
         <div className="card has-table">
           <header className="card-header">
@@ -123,9 +187,7 @@ const Orders = () => {
           </div>
         </div>
       ) : (
-        <div className="card-content">
-          <h2>Loading orders...</h2>
-        </div>
+        <div></div>
       )}
     </>
   );

@@ -1,4 +1,5 @@
 import { createSQLLog, prepareStatements } from "../tools";
+import jwt from "jsonwebtoken";
 
 const apiOrders = () => {
   return {
@@ -6,17 +7,72 @@ const apiOrders = () => {
     method: "GET",
     handler: async (request: Request, env: Env) => {
       const { searchParams } = new URL(request.url);
+      const token = request.headers.get("token");
       const count = searchParams.get("count");
       const page = parseInt(searchParams.get("page") as string) || 1;
       const itemsPerPage = 20;
+
+      if (!token) {
+        return { error: 401, msg: "Unauthorized" };
+      }
+
+      let decodedToken;
+      try {
+        decodedToken = jwt.decode(token);
+        if (!decodedToken) {
+          throw new Error("Invalid token");
+        }
+      } catch (e) {
+        return { error: 400, msg: "Invalid token" };
+      }
+
+      const { role, customerId } = decodedToken as {
+        role: string;
+        customerId: string;
+      };
+      let customerFilter = "";
+      let countStatement = "'Order'"
+      if (role === "user") {
+        customerFilter = ` AND "Order".CustomerId = '${customerId}'`;
+        countStatement += ` WHERE "Order".CustomerId = '${customerId}'`
+      }
+
+      const sqlQuery = `
+        SELECT SUM(OrderDetail.UnitPrice * OrderDetail.Discount * OrderDetail.Quantity) AS TotalProductsDiscount,
+               SUM(OrderDetail.UnitPrice * OrderDetail.Quantity) AS TotalProductsPrice,
+               SUM(OrderDetail.Quantity) AS TotalProductsItems,
+               COUNT(OrderDetail.OrderId) AS TotalProducts,
+               "Order".Id,
+               CustomerId,
+               EmployeeId,
+               OrderDate,
+               RequiredDate,
+               ShippedDate,
+               ShipVia,
+               Freight,
+               ShipName,
+               ShipAddress,
+               ShipCity,
+               ShipRegion,
+               ShipPostalCode,
+               ShipCountry,
+               ProductId
+        FROM "Order", OrderDetail
+        WHERE OrderDetail.OrderId = "Order".Id ${customerFilter}
+        GROUP BY "Order".Id
+        LIMIT ? OFFSET ?
+      `;
+
+      const params = [itemsPerPage, (page - 1) * itemsPerPage];
+
+
       const [stmts, sql] = prepareStatements(
         env.DB,
-        count ? '"Order"' : false,
-        [
-          'SELECT SUM(OrderDetail.UnitPrice * OrderDetail.Discount * OrderDetail.Quantity) AS TotalProductsDiscount, SUM(OrderDetail.UnitPrice * OrderDetail.Quantity) AS TotalProductsPrice, SUM(OrderDetail.Quantity) AS TotalProductsItems, COUNT(OrderDetail.OrderId) AS TotalProducts, "Order".Id, CustomerId, EmployeeId, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductId FROM "Order", OrderDetail WHERE OrderDetail.OrderId = "Order".Id GROUP BY "Order".Id LIMIT ?1 OFFSET ?2',
-        ],
-        [[itemsPerPage, (page - 1) * itemsPerPage]]
+        count ? countStatement : false,
+        [sqlQuery],
+        [params]
       );
+
       try {
         const startTime = Date.now();
         const response: D1Result<any>[] = await env.DB.batch(
@@ -30,6 +86,7 @@ const apiOrders = () => {
         const orders: any = count
           ? response.slice(1)[0].results
           : response[0].results;
+
         return {
           page: page,
           pages: count ? Math.ceil(total / itemsPerPage) : 0,
