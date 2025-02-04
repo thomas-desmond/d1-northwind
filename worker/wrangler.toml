@@ -1,7 +1,11 @@
 compatibility_date = "2024-08-21"
 main = "index.ts"
 name = "northwind-worker"
-observability.logs.enabled = true
+compatibility_flags = [ "nodejs_compat" ]
+compatibility_date = "2024-09-23"
+
+[observability]
+enabled = true
 
 [dev]
 port=8789
