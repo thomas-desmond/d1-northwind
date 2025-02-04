@@ -8,17 +8,34 @@ const apiSearch = () => {
       const { searchParams } = new URL(request.url);
       const q = searchParams.get("q");
       const table = searchParams.get("table");
+      const categoryId = searchParams.get("categoryId");
+      const sortBy = searchParams.get("sortBy");
+      const sortOrder = searchParams.get("sortOrder") || "asc"; // default to ascending order
       const itemsPerPage = 50;
-      const [stmts, sql] = prepareStatements(
-        env.DB,
-        false,
-        [
-          table == "products"
-            ? "SELECT Id, ProductName, SupplierId, CategoryId, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued FROM Product WHERE ProductName LIKE ?2 LIMIT ?1"
-            : "SELECT Id, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax FROM Customer WHERE CompanyName LIKE ?2 OR ContactName LIKE ?2 OR ContactTitle LIKE ?2 OR Address LIKE ?2 LIMIT ?1",
-        ],
-        [[itemsPerPage, `%${q}%`]]
-      );
+
+      let query = "";
+      let params: (string | number)[] = [itemsPerPage, `%${q}%`];
+
+      if (table === "products") {
+        query = "SELECT Id, ProductName, SupplierId, CategoryId, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued FROM Product WHERE ProductName LIKE ?2";
+        if (categoryId) {
+          query += " AND CategoryId = ?3";
+          params.push(Number(categoryId));
+        }
+        if (sortBy) {
+          query += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()}`;
+        }
+        query += " LIMIT ?1";
+      } else {
+        query = "SELECT Id, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax FROM Customer WHERE CompanyName LIKE ?2 OR ContactName LIKE ?2 OR ContactTitle LIKE ?2 OR Address LIKE ?2";
+        if (sortBy) {
+          query += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()}`;
+        }
+        query += " LIMIT ?1";
+      }
+
+
+      const [stmts, sql] = prepareStatements(env.DB, false, [query], [params]);
 
       try {
         const startTime = Date.now();
