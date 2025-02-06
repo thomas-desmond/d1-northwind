@@ -21,3 +21,7 @@ database_id = "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
 binding = "DB-Read-Replication"
 database_name = "northwind-read-replication"
 database_id = "f703ac35-c982-4207-8519-703170137aa1"
+
+[[kv_namespaces]]
+binding = "PRODUCT_SEARCH_CACHE"
+id = "fb5a73689cfa48f7a901706440c193af"
