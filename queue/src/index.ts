@@ -37,14 +37,27 @@ export default {
 	},
 
 	async queue(batch, env): Promise<void> {
-		for (const message of batch.messages) {
+		const updates = batch.messages.reduce((acc, message) => {
 			const body = message.body as { updateInventoryBy: number, productId: number };
 			const { updateInventoryBy, productId } = body;
 			console.log(`Processing product ${productId} with new inventory amount ${updateInventoryBy}`);
-			await env.DB.prepare(
-				`UPDATE Product SET UnitsInStock = UnitsInStock + ? WHERE Id = ?`
-			).bind(updateInventoryBy, productId).run();
-		}
+			if (!acc[productId]) {
+			  acc[productId] = 0;
+			}
+			acc[productId] += updateInventoryBy;
+			return acc;
+		  }, {} as Record<number, number>);
+
+		console.log(`Batch size: ${batch.messages.length}, Updates size: ${Object.keys(updates).length}`);
+
+		  // Create statements for aggregated updates
+		  const statements = Object.entries(updates).map(([productId, totalUpdate]) => {
+			return env.DB.prepare(
+			  `UPDATE Product SET UnitsInStock = UnitsInStock + ? WHERE Id = ?`
+			).bind(totalUpdate, productId);
+		  });
+
+		  await env.DB.batch(statements);
 	  },
 } satisfies ExportedHandler<Env>;
 
