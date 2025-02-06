@@ -37,7 +37,7 @@ const apiSearch = () => {
             select_fts: 0,
             select_where: 1,
             overallTimeMs: overallTimeMs,
-            log: createSQLLog(["Cloudflare KV Cache Hit"], queryData, overallTimeMs),
+            log: createSQLLog(["Cloudflare KV Search Cache Hit"], queryData, overallTimeMs),
           },
           results: cachedResults,
         };
