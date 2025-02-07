@@ -70,10 +70,11 @@ interface Order {
 const Orders = () => {
   const data = useLoaderData<LoaderType>();
   const [selectedToken, setSelectedToken] = useState("admin");
+  const [orders, setOrders] = useState<Order[]>(data.orders);
 
   const navigate = useNavigate();
 
-  const { orders, page, pages } = data;
+  const { page, pages } = data;
   const dispatch = useStatsDispatch();
 
   useEffect(() => {
@@ -88,6 +89,10 @@ const Orders = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setOrders(data.orders);
+  }, [data.orders]);
+
   const setPage = (page: number) => {
     const params = new URLSearchParams(window.location.search);
     params.set("page", page.toString());
@@ -96,9 +101,16 @@ const Orders = () => {
   };
 
   const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedToken(event.target.value);
+    const newToken = event.target.value;
+    if (selectedToken !== newToken) {
+      setSelectedToken(newToken);
+      setOrders([]);
+    }
+  };
+
+  const handleGetOrders = () => {
     const params = new URLSearchParams(window.location.search);
-    params.set("token", event.target.value);
+    params.set("token", selectedToken);
     navigate(`?${params.toString()}`);
   };
 
@@ -123,6 +135,13 @@ const Orders = () => {
             {label}
           </label>
         ))}
+        <button
+          onClick={handleGetOrders}
+          className="button"
+          style={{ backgroundColor: "#87CEEB" }}
+        >
+          Get Orders
+        </button>
       </div>
       {data.error && (
         <div className="card-content">
