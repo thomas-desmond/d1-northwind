@@ -34,9 +34,12 @@ export const loader: LoaderFunction = async ({ request }) => {
   }${sortBy ? `&sortBy=${sortBy}` : ""}${
     sortOrder ? `&sortOrder=${sortOrder}` : ""
   }`;
+  const startTime = performance.now();
   const res = await fetch(path);
+  const endTime = performance.now();
+  const fetchTime = endTime - startTime;
   const result = (await res.json()) as any;
-  return json({ ...result, categories: productCategories });
+  return json({ ...result, categories: productCategories, fetchTime });
 };
 type LoaderType = Awaited<ReturnType<typeof loader>>;
 
@@ -48,12 +51,13 @@ const Search = () => {
   const sortByParam = searchParams.get("sortBy");
   const sortOrderParam = searchParams.get("sortOrder");
   const data = useLoaderData<LoaderType>();
-  const { results, categories } = data;
+  const { results, categories, fetchTime } = data;
   const [keyword, setKeyword] = useState(q || "");
   const [table, setTable] = useState("products");
   const [selectedCategory, setSelectedCategory] = useState(categoryId || "");
   const [sortBy, setSortBy] = useState(sortByParam || "ProductName");
   const [sortOrder, setSortOrder] = useState(sortOrderParam || "asc");
+  
 
   const dispatch = useStatsDispatch();
   useEffect(() => {
@@ -188,6 +192,7 @@ const Search = () => {
           <p className="text-black font-bold text-lg">Search results</p>
           {results.length ? (
             <>
+            <p className="text-gray-500 text-lg font-bold">Total Search time: {fetchTime.toFixed(2)} ms</p>
               {/* <pre className="text-gray-400 text-sm">{log}</pre> */}
               {results.map((r: any, idx: number) => {
                 return (
