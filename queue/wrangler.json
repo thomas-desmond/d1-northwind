@@ -1,5 +1,5 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
+	"$schema": "../node_modules/wrangler/config-schema.json",
 	"name": "northwind-queue-worker",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-01-24",
@@ -30,5 +30,11 @@
 				"dead_letter_queue": "northwind-dead-letter"
 			}
 		]
-	}
+	},
+	"vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "tradewinds-vector-db"
+		}
+	]
 }

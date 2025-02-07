@@ -1,6 +1,7 @@
 import { apiStatus } from "./lib/api/status";
 import { apiSuppliers, apiSupplier } from "./lib/api/suppliers";
 import { apiProducts, apiProduct } from "./lib/api/products";
+import { apiRecommendationsForProduct } from "./lib/api/product_recommendations";
 import { apiOrders, apiOrder } from "./lib/api/orders";
 import { apiEmployees, apiEmployee } from "./lib/api/employees";
 import { apiCustomer, apiCustomers } from "./lib/api/customers";
@@ -15,6 +16,7 @@ apiEndpoints.push(apiSupplier());
 apiEndpoints.push(apiSuppliers());
 apiEndpoints.push(apiProduct());
 apiEndpoints.push(apiProducts());
+apiEndpoints.push(apiRecommendationsForProduct());
 apiEndpoints.push(apiOrders());
 apiEndpoints.push(apiOrdersNoValidation());
 apiEndpoints.push(apiOrder());
