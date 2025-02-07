@@ -50,8 +50,8 @@ export const RecommendedProducts = ({ productId: id }: { productId: number }) =>
         ) : (
           <div className="flex flex-wrap gap-2 space-between">
             {recommendedProducts.sort((a, b) => b.similarityScore - a.similarityScore).map((product) => (
-              <Link className="hover:bg-gray-100" to={`/product/${product.Id}`} key={product.Id}>
-                <div className="card" key={product.Id}>
+              <Link to={`/product/${product.Id}`} key={product.Id}>
+                <div className="card hover:bg-gray-50">
                   <div className="card-content">
                     <p className="title is-4">
                       {product.ProductName}
