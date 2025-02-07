@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id              Int                 @id @default(autoincrement())
+  lastName        String?
+  firstName       String?
+  title           String?
+  titleOfCourtesy String?
+  birthDate       String?
+  hireDate        String?
+  address         String?
+  city            String?
+  region          String?
+  postalCode      String?
+  country         String?
+  homePhone       String?
+  extension       String?
+  photo           Bytes?
+  notes           String?
+  reportsTo       Int?
+  photoPath       String?
+  territories     EmployeeTerritory[]
+  orders          Order[]
+  reporter        Employee?           @relation("EmployeeToEmployee", fields: [reportsTo], references: [id])
+  reporting       Employee[]          @relation("EmployeeToEmployee")
+}
+
+model Category {
+  id           Int       @id @default(autoincrement())
+  categoryName String?
+  description  String?
+  products     Product[]
+}
+
+model Customer {
+  id           String                 @id
+  companyName  String?
+  contactName  String?
+  contactTitle String?
+  address      String?
+  city         String?
+  region       String?
+  postalCode   String?
+  country      String?
+  phone        String?
+  fax          String?
+  orders       Order[]
+  demos        CustomerCustomerDemo[]
+}
+
+model Shipper {
+  id          Int     @id @default(autoincrement())
+  companyName String?
+  phone       String?
+  orders      Order[] @relation("ShipVia")
+}
+
+model Supplier {
+  id           Int       @id @default(autoincrement())
+  companyName  String?
+  contactName  String?
+  contactTitle String?
+  address      String?
+  city         String?
+  region       String?
+  postalCode   String?
+  country      String?
+  phone        String?
+  fax          String?
+  homePage     String?
+  products     Product[]
+}
+
+model Order {
+  id             Int           @id @default(autoincrement())
+  customerId     String?
+  employeeId     Int
+  orderDate      String?
+  requiredDate   String?
+  shippedDate    String?
+  shipVia        Int?
+  freight        Decimal
+  shipName       String?
+  shipAddress    String?
+  shipCity       String?
+  shipRegion     String?
+  shipPostalCode String?
+  shipCountry    String?
+  customer       Customer?     @relation(fields: [customerId], references: [id])
+  employee       Employee      @relation(fields: [employeeId], references: [id])
+  shipper        Shipper?      @relation("ShipVia", fields: [shipVia], references: [id])
+  orderDetails   OrderDetail[]
+}
+
+model Product {
+  id              Int           @id @default(autoincrement())
+  productName     String?
+  supplierId      Int
+  categoryId      Int
+  quantityPerUnit String?
+  unitPrice       Decimal
+  unitsInStock    Int
+  unitsOnOrder    Int
+  reorderLevel    Int
+  discontinued    Int
+  supplier        Supplier      @relation(fields: [supplierId], references: [id])
+  category        Category      @relation(fields: [categoryId], references: [id])
+  orderDetails    OrderDetail[]
+}
+
+model OrderDetail {
+  id        String  @id
+  orderId   Int
+  productId Int
+  unitPrice Decimal
+  quantity  Int
+  discount  Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model CustomerCustomerDemo {
+  id             String               @id
+  customerTypeId String?
+  customer       Customer             @relation(fields: [id], references: [id])
+  demographic    CustomerDemographic? @relation(fields: [customerTypeId], references: [id])
+}
+
+model CustomerDemographic {
+  id           String                 @id
+  customerDesc String?
+  customers    CustomerCustomerDemo[]
+}
+
+model Region {
+  id                Int         @id @default(autoincrement())
+  regionDescription String?
+  territories       Territory[]
+}
+
+model Territory {
+  id                   String              @id
+  territoryDescription String?
+  regionId             Int
+  region               Region              @relation(fields: [regionId], references: [id])
+  employees            EmployeeTerritory[]
+}
+
+model EmployeeTerritory {
+  id          String     @id
+  employeeId  Int
+  territoryId String?
+  employee    Employee   @relation(fields: [employeeId], references: [id])
+  territory   Territory? @relation(fields: [territoryId], references: [id])
+}
