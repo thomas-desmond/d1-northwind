@@ -20,9 +20,8 @@ const apiSearch = () => {
       if (cached) {
         console.log("Cache hit for search query", cacheKey);
         const cachedResults = JSON.parse(cached)
-        const overallTimeMs = Date.now() - startTimeCache;
+        const overallTimeMsCache = Date.now() - startTimeCache;
 
-        console.log(cachedResults)
         const queryData = [
           {meta: {
             served_by: "cache",
@@ -36,8 +35,8 @@ const apiSearch = () => {
             results: cachedResults ? cachedResults.length : 0,
             select_fts: 0,
             select_where: 1,
-            overallTimeMs: overallTimeMs,
-            log: createSQLLog(["Cloudflare KV Search Cache Hit"], queryData, overallTimeMs),
+            overallTimeMs: overallTimeMsCache,
+            log: createSQLLog(["Cloudflare KV Search Cache Hit"], queryData, overallTimeMsCache),
           },
           results: cachedResults,
         };
