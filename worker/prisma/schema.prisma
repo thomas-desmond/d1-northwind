@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  Id              Int     @id @default(autoincrement())
+  LastName        String?
+  FirstName       String?
+  Title           String?
+  TitleOfCourtesy String?
+  BirthDate       String?
+  HireDate        String?
+  Address         String?
+  City            String?
+  Region          String?
+  PostalCode      String?
+  Country         String?
+  HomePhone       String?
+  Extension       String?
+  Photo           Bytes?
+  Notes           String?
+  ReportsTo       Int?
+  PhotoPath       String?
+}
