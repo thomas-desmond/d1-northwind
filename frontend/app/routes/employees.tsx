@@ -83,7 +83,7 @@ const Employees = () => {
                         <div className="image">
                           <img
                             alt="employee avatar"
-                            src={`https://api.dicebear.com/9.x/initials/svg?seed=${employee.FirstName[0]}-${employee.LastName[0]}`}
+                            src={`https://api.dicebear.com/9.x/initials/svg?seed=${employee.firstName[0]}-${employee.lastName[0]}`}
                             className="rounded-full"
                           />
                         </div>
@@ -91,13 +91,13 @@ const Employees = () => {
                       <td data-label="Name">
                         <Link
                           className="link"
-                          to={`/employee/${employee.Id}`}
-                        >{`${employee.FirstName} ${employee.LastName}`}</Link>
+                          to={`/employee/${employee.id}`}
+                        >{`${employee.firstName} ${employee.lastName}`}</Link>
                       </td>
-                      <td data-label="Title">{employee.Title}</td>
-                      <td data-label="City">{employee.City}</td>
-                      <td data-label="Phone">{employee.HomePhone}</td>
-                      <td data-label="Country">{employee.Country}</td>
+                      <td data-label="Title">{employee.title}</td>
+                      <td data-label="City">{employee.city}</td>
+                      <td data-label="Phone">{employee.homePhone}</td>
+                      <td data-label="Country">{employee.country}</td>
                     </tr>
                   );
                 })}
