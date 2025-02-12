@@ -22,9 +22,12 @@
 			}
 		],
 		"consumers": [
-      {
-        "queue": "northwind-inventory-queue",
-				"max_batch_timeout": 2
+			{
+				"queue": "northwind-inventory-queue",
+				"max_batch_timeout": 3,
+				"max_batch_size": 10,
+				"max_retries": 3,
+				"dead_letter_queue": "northwind-dead-letter"
       }
     ]
 	}
