@@ -146,8 +146,8 @@ const OrdersNoValidation = () => {
           <h2>{data.error}</h2>
         </div>
       )}
-      <div className="text-xl font-semibold my-3">Total Orders: {total}</div>
-      <div className="text-xl font-semibold my-3">Fetch Time: {fetchTime} ms</div>
+      <div className="text-xl font-semibold my-3">Total orders: {total}</div>
+      <div className="text-xl font-semibold my-3">Total data fetch time: {fetchTime} ms</div>
       {orders.length ? (
         <div className="card has-table">
           <header className="card-header">
