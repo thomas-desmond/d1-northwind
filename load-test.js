@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 const endpoint = 'https://northwind-queue-worker.cf-tme.workers.dev';
-const concurrency = 10;
-const totalRequests = 500;
+const concurrency = 5;
+const totalRequests = 100;
 
 async function sendRequest() {
   const productId = Math.floor(Math.random() * 77) + 1;
