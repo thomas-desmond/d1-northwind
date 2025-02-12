@@ -47,7 +47,7 @@ export default function Admin() {
           onClick={makeInventoryUpdates}
           disabled={loading}
         >
-          Make 250 Inventory Updates
+          Trigger Inventory Updates
         </button>
         {loading && (
           <Loader className="animate-spin ml-4" />

@@ -14,11 +14,10 @@
 export interface Env {
 	northwind_inventory_queue: Queue<any>;
 	DB: D1Database;
- }
+}
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-
 		const corsHeaders = getCorsHeaders();
 		if (handleOptionsRequest(request, corsHeaders)) {
 			return new Response('OK', {
@@ -26,39 +25,43 @@ export default {
 			});
 		}
 
-		const body = await request.json() as { updateInventoryBy: number, productId: number };
+		const body = (await request.json()) as { updateInventoryBy: number; productId: number };
 		let productUpdate = {
 			updateInventoryBy: body.updateInventoryBy,
 			productId: body.productId,
-		  };
+		};
 
 		await env.northwind_inventory_queue.send(productUpdate);
-		return Response.json("Success", { headers: { ...corsHeaders } });
+		return Response.json('Success', { headers: { ...corsHeaders } });
 	},
 
 	async queue(batch, env): Promise<void> {
+		// Simulate an error during the batch update process for 15% of the calls
+		if (Math.random() < 0.15) {
+			throw new Error('Simulated error during batch update for testing queue retry logic');
+		}
+
 		const updates = batch.messages.reduce((acc, message) => {
-			const body = message.body as { updateInventoryBy: number, productId: number };
+			const body = message.body as { updateInventoryBy: number; productId: number };
 			const { updateInventoryBy, productId } = body;
-			console.log(`Processing product ${productId} with new inventory amount ${updateInventoryBy}`);
+			const retryCount = message.attempts;
+			console.log(`Processing product ID: ${productId}, update inventory by ${updateInventoryBy}. Attempt count: ${retryCount}`);
 			if (!acc[productId]) {
-			  acc[productId] = 0;
+				acc[productId] = 0;
 			}
 			acc[productId] += updateInventoryBy;
 			return acc;
-		  }, {} as Record<number, number>);
+		}, {} as Record<number, number>);
 
 		console.log(`Batch size: ${batch.messages.length}, Updates size: ${Object.keys(updates).length}`);
 
-		  // Create statements for aggregated updates
-		  const statements = Object.entries(updates).map(([productId, totalUpdate]) => {
-			return env.DB.prepare(
-			  `UPDATE Product SET UnitsInStock = UnitsInStock + ? WHERE Id = ?`
-			).bind(totalUpdate, productId);
-		  });
+		// Create statements for aggregated updates
+		const statements = Object.entries(updates).map(([productId, totalUpdate]) => {
+			return env.DB.prepare(`UPDATE Product SET UnitsInStock = UnitsInStock + ? WHERE Id = ?`).bind(totalUpdate, productId);
+		});
 
-		  await env.DB.batch(statements);
-	  },
+		await env.DB.batch(statements);
+	},
 } satisfies ExportedHandler<Env>;
 
 function getCorsHeaders() {
