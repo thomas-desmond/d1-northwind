@@ -63,6 +63,15 @@ const Aside = () => {
             </li>
             <li>
               <NavLink
+                to="/orders-no-validation"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                <span className="icon material-icons">shopping_cart</span>
+                <span className="menu-item-label">Orders (No JWT)</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/employees"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >

@@ -14,36 +14,23 @@ export const loader: LoaderFunction = async ({
   const page = Number(url.searchParams.get("page")) || 1;
   const count = url.searchParams.get("count");
   const search = url.searchParams.get("search");
-  const tokenKey = url.searchParams.get("token") || "admin";
+  const role = url.searchParams.get("token") || "admin";
 
-  const jwtTokens = {
-    admin: context.JWT_ADMIN,
-    user: context.JWT_USER,
-    invalid: context.JWT_INVALID,
-  };
-
-  const token = jwtTokens[tokenKey as keyof typeof jwtTokens];
-
-  if (!token) {
-    return json({
-      error: "Unauthorized: Token not provided or invalid",
-      orders: [],
-      pages: 1,
-    });
-  }
   const rand = Math.floor(Math.random() * 1000001);
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://api.cf-northwind.com"
       : "http://127.0.0.1:8789"
-  }/api/orders?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
-    search ? `&search=${search}` : ""
-  }&rand=${rand}`;
-
-  const headers = { token: `${token}` };
+  }/api/orders-no-validation?page=${page}${
+    Number(count) > 0 ? `` : `&count=true`
+  }${search ? `&search=${search}` : ""}&rand=${rand}`;
 
   const startTime = Date.now();
-  const res = await fetch(path, { headers });
+  const res = await fetch(path, {
+    headers: {
+      "Role": role,
+    },
+  });
   const endTime = Date.now();
   const fetchTime = endTime - startTime;
 
@@ -72,7 +59,7 @@ interface Order {
   ShipCountry: string;
 }
 
-const Orders = () => {
+const OrdersNoValidation = () => {
   const data = useLoaderData<LoaderType>();
   const [selectedToken, setSelectedToken] = useState("admin");
   const [orders, setOrders] = useState<Order[]>(data.orders);
@@ -114,6 +101,8 @@ const Orders = () => {
     if (selectedToken !== newToken) {
       setSelectedToken(newToken);
       setOrders([]);
+      setTotal(0);
+      setFetchTime(0);
     }
   };
 
@@ -125,12 +114,12 @@ const Orders = () => {
 
   return (
     <>
+      <h1 className="text-2xl font-bold mb-4">Orders (No JWT Validation)</h1>
       <div>
         <label className="mr-2">Log In As:</label>
         {[
           { key: "admin", label: "Administrator" },
           { key: "user", label: "User 'Around The Horn'" },
-          { key: "invalid", label: "Invalid User" },
         ].map(({ key, label }) => (
           <label key={key} className="radio-inline mr-2">
             <input
@@ -223,4 +212,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default OrdersNoValidation;

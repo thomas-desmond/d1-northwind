@@ -5,6 +5,7 @@ import { apiOrders, apiOrder } from "./lib/api/orders";
 import { apiEmployees, apiEmployee } from "./lib/api/employees";
 import { apiCustomer, apiCustomers } from "./lib/api/customers";
 import { apiSearch } from "./lib/api/search";
+import { apiOrdersNoValidation } from "./lib/api/orders-no-validation";
 
 interface Env {
   DB: D1Database;
@@ -18,6 +19,7 @@ apiEndpoints.push(apiSuppliers());
 apiEndpoints.push(apiProduct());
 apiEndpoints.push(apiProducts());
 apiEndpoints.push(apiOrders());
+apiEndpoints.push(apiOrdersNoValidation());
 apiEndpoints.push(apiOrder());
 apiEndpoints.push(apiEmployee());
 apiEndpoints.push(apiEmployees());
