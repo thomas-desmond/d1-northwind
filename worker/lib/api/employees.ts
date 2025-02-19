@@ -88,8 +88,4 @@ const apiEmployee = () => {
   };
 };
 
-interface Env {
-  DB: D1Database;
-}
-
 export { apiEmployees, apiEmployee };

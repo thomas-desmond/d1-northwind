@@ -88,8 +88,4 @@ const apiSupplier = () => {
   };
 };
 
-interface Env {
-  DB: D1Database;
-}
-
 export { apiSuppliers, apiSupplier };

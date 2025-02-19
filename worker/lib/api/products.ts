@@ -90,8 +90,4 @@ const apiProduct = () => {
   };
 };
 
-interface Env {
-  DB: D1Database;
-}
-
 export { apiProducts, apiProduct };

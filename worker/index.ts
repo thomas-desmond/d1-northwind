@@ -6,10 +6,6 @@ import { apiEmployees, apiEmployee } from "./lib/api/employees";
 import { apiCustomer, apiCustomers } from "./lib/api/customers";
 import { apiSearch } from "./lib/api/search";
 
-interface Env {
-  DB: D1Database;
-}
-
 // insert API endpoints here
 const apiEndpoints: Array<any> = [];
 apiEndpoints.push(apiStatus());
