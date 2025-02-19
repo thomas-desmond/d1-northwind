@@ -1,7 +1,13 @@
-compatibility_date = "2022-04-05"
 main = "index.ts"
 name = "northwind-worker"
-route = "api.northwind.d1sql.com/*"
+compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2024-09-23"
+
+[observability]
+enabled = true
+
+[dev]
+port = 8789
 
 [placement]
 mode = "smart"
@@ -9,4 +15,13 @@ mode = "smart"
 [[d1_databases]]
 binding = "DB"
 database_name = "northwind"
-database_id = "d5b1d127-1d3f-467e-953b-cbc69f0a9e06"
+database_id = "fb6d3260-7e74-41a9-a3c8-b051bd595ab3"
+
+[[d1_databases]]
+binding = "DB-Read-Replication"
+database_name = "northwind-read-replication"
+database_id = "f703ac35-c982-4207-8519-703170137aa1"
+
+[[kv_namespaces]]
+binding = "PRODUCT_SEARCH_CACHE"
+id = "fb5a73689cfa48f7a901706440c193af"

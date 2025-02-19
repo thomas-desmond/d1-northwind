@@ -7,16 +7,23 @@
     "lib": "lib"
   },
   "scripts": {
-    "dev": "NO_D1_WARNING=true wrangler dev",
-    "deploy": "NO_D1_WARNING=true wrangler deploy",
-    "local:init": "NO_D1_WARNING=true wrangler d1 execute northwind --file=../db/schema.sql --local",
-    "local:load": "NO_D1_WARNING=true wrangler d1 execute northwind --file=../db/data-big.sql --local"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "local:init": "wrangler d1 execute northwind --file=../db/schema.sql --local",
+    "local:load": "wrangler d1 execute northwind --file=../db/data-big.sql --local"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20230419.0",
-    "wrangler": "^3.19.0"
+    "@cloudflare/workers-types": "^4.20250124.3",
+    "@prisma/adapter-d1": "^6.3.1",
+    "@prisma/client": "^6.3.1",
+    "jsonwebtoken": "9.0.2",
+    "wrangler": "^3.105.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.8",
+    "prisma": "^6.3.1"
   }
 }

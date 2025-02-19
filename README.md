@@ -87,7 +87,7 @@ npm run local:load -w worker
 npm run dev -w worker
 ```
 
-This will start the Worker at `http://127.0.0.1:8787` with the database loaded with data. At this point you can start the frontend in a separate terminal window:
+This will start the Worker at `http://127.0.0.1:8789` with the database loaded with data. At this point you can start the frontend in a separate terminal window:
 
 ```
 npm run dev -w frontend

@@ -1,4 +1,6 @@
 import { createSQLLog, prepareStatements } from "../tools";
+import { PrismaClient } from "@prisma/client";
+import { PrismaD1 } from "@prisma/adapter-d1";
 
 const apiEmployees = () => {
   return {
@@ -8,39 +10,31 @@ const apiEmployees = () => {
       const { searchParams } = new URL(request.url);
       const count = searchParams.get("count");
       const page = parseInt(searchParams.get("page") as string) || 1;
-      const itemsPerPage = 20;
-      const [stmts, sql] = prepareStatements(
-        env.DB,
-        count ? "Employee" : false,
-        [
-          "SELECT Id, LastName, FirstName, Title, TitleOfCourtesy, BirthDate, HireDate, Address, City, Region, PostalCode, Country, HomePhone, Extension, Photo, Notes, ReportsTo, PhotoPath FROM Employee LIMIT ?1 OFFSET ?2",
-        ],
-        [[itemsPerPage, (page - 1) * itemsPerPage]]
-      );
+      const itemsPerPage = 2;
+      const adapter = new PrismaD1(env.DB);
+      const prisma = new PrismaClient({ adapter });
+
       try {
+        let employees;
         const startTime = Date.now();
-        const response: D1Result<any>[] = await env.DB.batch(
-          stmts as D1PreparedStatement[]
-        );
+        employees = await prisma.employee.findMany({ take: itemsPerPage });
+        if (page !== 1) {
+          employees = await prisma.employee.findMany({
+            skip: itemsPerPage * (page - 1),
+            take: itemsPerPage,
+          });
+        }
         const overallTimeMs = Date.now() - startTime;
 
-        const first = response[0];
-        const total =
-          count && first.results ? (first.results[0] as any).total : 0;
-        const employees: any = count
-          ? response.slice(1)[0].results
-          : response[0].results;
+        const total = count ? await prisma.employee.count() : 0;
         return {
           page: page,
           pages: count ? Math.ceil(total / itemsPerPage) : 0,
           items: itemsPerPage,
           total: count ? total : 0,
           stats: {
-            queries: stmts.length,
             results: employees.length + (count ? 1 : 0),
-            select: stmts.length,
             overallTimeMs: overallTimeMs,
-            log: createSQLLog(sql, response, overallTimeMs),
           },
           employees: employees,
         };
@@ -57,18 +51,16 @@ const apiEmployee = () => {
     method: "GET",
     handler: async (request: Request, env: Env) => {
       const { searchParams } = new URL(request.url);
-      const id = searchParams.get("Id");
-      const [stmts, sql] = prepareStatements(
-        env.DB,
-        false,
-        [
-          "SELECT Report.Id AS ReportId, Report.FirstName AS ReportFirstName, Report.LastName AS ReportLastName, Employee.Id, Employee.LastName, Employee.FirstName, Employee.Title, Employee.TitleOfCourtesy, Employee.BirthDate, Employee.HireDate, Employee.Address, Employee.City, Employee.Region, Employee.PostalCode, Employee.Country, Employee.HomePhone, Employee.Extension, Employee.Photo, Employee.Notes, Employee.ReportsTo, Employee.PhotoPath FROM Employee LEFT JOIN Employee AS Report ON Report.Id = Employee.ReportsTo WHERE Employee.Id = ?1",
-        ],
-        [[id]]
-      );
+      const id = parseInt(searchParams.get("Id") || "0");
+      const adapter = new PrismaD1(env.DB);
+      const prisma = new PrismaClient({ adapter });
       try {
         const startTime = Date.now();
-        const employee: any = await (stmts[0] as D1PreparedStatement).all();
+        const employee = await prisma.employee.findUnique({
+          where: {
+            id: id,
+          },
+        });
         const overallTimeMs = Date.now() - startTime;
 
         return {
@@ -77,9 +69,8 @@ const apiEmployee = () => {
             results: 1,
             select_leftjoin: 1,
             overallTimeMs: overallTimeMs,
-            log: createSQLLog(sql, [employee], overallTimeMs),
           },
-          employee: employee.results[0],
+          employee: employee,
         };
       } catch (e: any) {
         return { error: 404, msg: e.toString() };
