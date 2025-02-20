@@ -19,15 +19,17 @@ const apiSearch = () => {
       const cached = await env.PRODUCT_SEARCH_CACHE.get(cacheKey);
       if (cached) {
         console.log("Cache hit for search query", cacheKey);
-        const cachedResults = JSON.parse(cached)
+        const cachedResults = JSON.parse(cached);
         const overallTimeMsCache = Date.now() - startTimeCache;
 
         const queryData = [
-          {meta: {
-            served_by: "cache",
-            duration: 0
-          }}
-        ]
+          {
+            meta: {
+              served_by: "cache",
+              duration: 0,
+            },
+          },
+        ];
         return {
           items: itemsPerPage,
           stats: {
@@ -36,7 +38,11 @@ const apiSearch = () => {
             select_fts: 0,
             select_where: 1,
             overallTimeMs: overallTimeMsCache,
-            log: createSQLLog(["Cloudflare KV Search Cache Hit"], queryData, overallTimeMsCache),
+            log: createSQLLog(
+              ["Cloudflare KV Search Cache Hit"],
+              queryData,
+              overallTimeMsCache
+            ),
           },
           results: cachedResults,
         };
@@ -96,10 +102,5 @@ const apiSearch = () => {
     },
   };
 };
-
-interface Env {
-  DB: D1Database;
-  PRODUCT_SEARCH_CACHE: KVNamespace;
-}
 
 export { apiSearch };

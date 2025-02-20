@@ -151,8 +151,4 @@ const apiOrder = () => {
   };
 };
 
-interface Env {
-  DB: D1Database;
-}
-
 export { apiOrders, apiOrder };

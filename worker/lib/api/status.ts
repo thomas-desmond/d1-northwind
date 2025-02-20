@@ -10,8 +10,4 @@ const apiStatus = () => {
   };
 };
 
-interface Env {
-  DB: D1Database;
-}
-
 export { apiStatus };

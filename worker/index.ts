@@ -6,10 +6,7 @@ import { apiEmployees, apiEmployee } from "./lib/api/employees";
 import { apiCustomer, apiCustomers } from "./lib/api/customers";
 import { apiSearch } from "./lib/api/search";
 import { apiOrdersNoValidation } from "./lib/api/orders-no-validation";
-
-interface Env {
-  DB: D1Database;
-}
+import { apiPaymentWebhook } from "./lib/api/payment-webhook";
 
 // insert API endpoints here
 const apiEndpoints: Array<any> = [];
@@ -26,6 +23,7 @@ apiEndpoints.push(apiEmployees());
 apiEndpoints.push(apiCustomer());
 apiEndpoints.push(apiCustomers());
 apiEndpoints.push(apiSearch());
+apiEndpoints.push(apiPaymentWebhook())
 
 export default {
   async fetch(request: Request, env: Env) {

@@ -87,8 +87,4 @@ const apiCustomer = () => {
   };
 };
 
-interface Env {
-  DB: D1Database;
-}
-
 export { apiCustomers, apiCustomer };
