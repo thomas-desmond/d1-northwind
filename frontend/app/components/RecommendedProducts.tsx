@@ -8,6 +8,7 @@ export const RecommendedProducts = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [fetchTime, setFetchTime] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -21,16 +22,8 @@ export const RecommendedProducts = ({
     fetch(path)
       .then((response) => response.json())
       .then((data) => {
-        const products = data.products.map((product) => {
-          const similiarityScore = data.similarityScores.find(
-            (score) => score.id === product.Id.toString()
-          );
-          return {
-            ...product,
-            similarityScore: similiarityScore?.score || 0,
-          };
-        });
-        setRecommendedProducts(products);
+        setRecommendedProducts(data.products);
+        setFetchTime(data.stats.overallTimeMs);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -54,19 +47,24 @@ export const RecommendedProducts = ({
             <span className="icon material-icons animate-spin">loop</span>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-2 space-between">
-            {recommendedProducts
-              .sort((a, b) => b.similarityScore - a.similarityScore)
-              .map((product) => (
-                <Link to={`/product/${product.Id}`} key={product.Id}>
-                  <div className="card hover:bg-gray-50">
-                    <div className="card-content">
-                      <p className="title is-4">{product.ProductName}</p>
+          <>
+            <div className="flex flex-wrap gap-2 space-between">
+              {recommendedProducts
+                .sort((a, b) => b.score - a.score)
+                .map((product) => (
+                  <Link to={`/product/${product.id}`} key={product.id}>
+                    <div className="card hover:bg-gray-50">
+                      <div className="card-content">
+                        <p className="title is-4">{product.name}</p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-          </div>
+                  </Link>
+                ))}
+            </div>
+            <div className="mt-4 text-sm text-gray-500 border-t pt-2">
+              Recommendations generated in: {fetchTime.toFixed(0)}ms
+            </div>
+          </>
         )}
       </div>
     </div>

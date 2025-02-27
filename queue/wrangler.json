@@ -3,6 +3,7 @@
 	"name": "northwind-queue-worker",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-01-24",
+	"account_id": "d6850012d250c1600028b55d1d879b16",
 	"observability": {
 		"enabled": true
 	},

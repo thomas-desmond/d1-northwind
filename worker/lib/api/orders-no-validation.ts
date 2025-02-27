@@ -12,12 +12,11 @@ const apiOrdersNoValidation = () => {
       const itemsPerPage = 20;
 
       let customerFilter = "";
-      let countStatement = "'Order'"
+      let countStatement = "'Order'";
       if (role === "user") {
         customerFilter = ` AND "Order".CustomerId = 'AROUT'`;
-        countStatement += ` WHERE "Order".CustomerId = 'AROUT'`
+        countStatement += ` WHERE "Order".CustomerId = 'AROUT'`;
       }
-
 
       const sqlQuery = `
         SELECT SUM(OrderDetail.UnitPrice * OrderDetail.Discount * OrderDetail.Quantity) AS TotalProductsDiscount,
@@ -88,9 +87,5 @@ const apiOrdersNoValidation = () => {
     },
   };
 };
-
-interface Env {
-  DB: D1Database;
-}
 
 export { apiOrdersNoValidation };
