@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export const RecommendedProducts = ({ productId: id }: { productId: number }) => {
+export const RecommendedProducts = ({
+  productId: id,
+}: {
+  productId: number;
+}) => {
   const [loading, setLoading] = useState(true);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
 
@@ -10,7 +14,7 @@ export const RecommendedProducts = ({ productId: id }: { productId: number }) =>
 
     const path = `${
       process.env.NODE_ENV === "production"
-        ? "https://northwind-worker.cf-tme.workers.dev"
+        ? "https://api.cf-northwind.com"
         : "http://127.0.0.1:8789"
     }/api/product_recommendation?Id=${id}`;
 
@@ -18,11 +22,13 @@ export const RecommendedProducts = ({ productId: id }: { productId: number }) =>
       .then((response) => response.json())
       .then((data) => {
         const products = data.products.map((product) => {
-          const similiarityScore = data.similarityScores.find(score => score.id === product.Id.toString());
+          const similiarityScore = data.similarityScores.find(
+            (score) => score.id === product.Id.toString()
+          );
           return {
             ...product,
             similarityScore: similiarityScore?.score || 0,
-          }
+          };
         });
         setRecommendedProducts(products);
       })
@@ -49,20 +55,20 @@ export const RecommendedProducts = ({ productId: id }: { productId: number }) =>
           </div>
         ) : (
           <div className="flex flex-wrap gap-2 space-between">
-            {recommendedProducts.sort((a, b) => b.similarityScore - a.similarityScore).map((product) => (
-              <Link to={`/product/${product.Id}`} key={product.Id}>
-                <div className="card hover:bg-gray-50">
-                  <div className="card-content">
-                    <p className="title is-4">
-                      {product.ProductName}
-                    </p>
+            {recommendedProducts
+              .sort((a, b) => b.similarityScore - a.similarityScore)
+              .map((product) => (
+                <Link to={`/product/${product.Id}`} key={product.Id}>
+                  <div className="card hover:bg-gray-50">
+                    <div className="card-content">
+                      <p className="title is-4">{product.ProductName}</p>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 };
