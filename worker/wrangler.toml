@@ -15,7 +15,7 @@ mode = "smart"
 [[d1_databases]]
 binding = "DB"
 database_name = "northwind"
-database_id = "fb6d3260-7e74-41a9-a3c8-b051bd595ab3"
+database_id = "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
 
 [[d1_databases]]
 binding = "DB-Read-Replication"

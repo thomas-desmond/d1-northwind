@@ -7,8 +7,11 @@ import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { useStatsDispatch } from "~/components/StatsContext";
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   invariant(params.id, "Missing id");
+
+  const url = new URL(request.url);
+  const paymentSuccess = url.searchParams.get("payment_success") === "true";
 
   const rand = Math.floor(Math.random() * 1000001);
   const path = `${
@@ -20,14 +23,14 @@ export const loader: LoaderFunction = async ({ params }) => {
   const res = await fetch(path);
   const result = (await res.json()) as any;
 
-  return json({ ...result });
+  return json({ ...result, paymentSuccess });
 };
 type LoaderType = Awaited<ReturnType<typeof loader>>;
 
 const Customer = () => {
   const navigate = useNavigate();
   const data = useLoaderData<LoaderType>();
-  const { customer } = data;
+  const { customer, paymentSuccess } = data;
 
   const dispatch = useStatsDispatch();
   useEffect(() => {
@@ -73,6 +76,10 @@ const Customer = () => {
                 ) : (
                   false
                 )}
+                <AddTableField
+                  name="Plan"
+                  value={paymentSuccess ? "Pro Plan" : "Not on Pro Plan"}
+                />
               </div>
             </div>
 
@@ -90,6 +97,18 @@ const Customer = () => {
                   Go back
                 </button>
               </div>
+              {!paymentSuccess && (
+                <div className="control">
+                  <button
+                    onClick={() => {
+                      navigate(`/checkout`, { replace: false });
+                    }}
+                    className="button green"
+                  >
+                    Get Pro Plan
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

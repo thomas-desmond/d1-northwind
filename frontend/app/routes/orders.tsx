@@ -114,6 +114,8 @@ const Orders = () => {
     if (selectedToken !== newToken) {
       setSelectedToken(newToken);
       setOrders([]);
+      setTotal(0); // Reset total
+      setFetchTime(0); // Reset fetch time
     }
   };
 
