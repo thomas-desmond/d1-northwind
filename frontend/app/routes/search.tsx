@@ -27,7 +27,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const rand = Math.floor(Math.random() * 1000001);
   const path = `${
     process.env.NODE_ENV === "production"
-      ? "https://northwind-worker.cf-tme.workers.dev"
+      ? "https://api.cf-northwind.com"
       : "http://127.0.0.1:8789"
   }/api/search?q=${keyword}&rand=${rand}&table=${table ?? "products"}${
     categoryId ? `&categoryId=${categoryId}` : ""
@@ -57,7 +57,6 @@ const Search = () => {
   const [selectedCategory, setSelectedCategory] = useState(categoryId || "");
   const [sortBy, setSortBy] = useState(sortByParam || "ProductName");
   const [sortOrder, setSortOrder] = useState(sortOrderParam || "asc");
-  
 
   const dispatch = useStatsDispatch();
   useEffect(() => {
@@ -192,7 +191,9 @@ const Search = () => {
           <p className="text-black font-bold text-lg">Search results</p>
           {results.length ? (
             <>
-            <p className="text-gray-500 text-lg font-bold">Total Search time: {fetchTime.toFixed(2)} ms</p>
+              <p className="text-gray-500 text-lg font-bold">
+                Total Search time: {fetchTime.toFixed(2)} ms
+              </p>
               {/* <pre className="text-gray-400 text-sm">{log}</pre> */}
               {results.map((r: any, idx: number) => {
                 return (

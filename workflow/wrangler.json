@@ -1,0 +1,37 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "northwind-workflow",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-02-04",
+	"account_id": "d6850012d250c1600028b55d1d879b16",
+	"observability": {
+		"enabled": true
+	},
+	"ai": {
+		"binding": "AI"
+	},
+	"vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "northwind-vector-db"
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "northwind",
+			"database_id": "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
+		}
+	],
+	"workflows": [
+		{
+			"binding": "PRODUCT_VECTOR_WORKFLOW",
+			"class_name": "GenerateProductVectorWorkflow",
+			"name": "product-vector-workflow"
+		}
+	]
+}

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "remix build",
     "dev:remix": "remix watch",
-    "deploy": "npm run build && wrangler pages publish ./public",
+    "deploy": "npm run build && wrangler pages deploy",
     "dev:wrangler": "cross-env NODE_ENV=development npm run wrangler",
     "dev": "npm-run-all build --parallel \"dev:*\"",
     "start": "cross-env NODE_ENV=production npm run wrangler",
