@@ -58,7 +58,7 @@ const apiEmployee = () => {
         const startTime = Date.now();
         const employee = await prisma.employee.findUnique({
           where: {
-            id: id,
+            Id: id,
           },
         });
         const overallTimeMs = Date.now() - startTime;

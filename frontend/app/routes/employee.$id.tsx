@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://api.cf-northwind.com"
-      : "http://127.0.0.1:8789"
+    : "http://127.0.0.1:8789"
   }/api/employee?Id=${params.id}&rand=${rand}`;
 
   const res = await fetch(path);
@@ -66,15 +66,6 @@ const Employee = () => {
                 <AddTableField name="Home Phone" value={employee.HomePhone} />
                 <AddTableField name="Extension" value={employee.Extension} />
                 <AddTableField name="Notes" value={employee.Notes} />
-                {employee.ReportsTo ? (
-                  <AddTableField
-                    name="Reports To"
-                    link={`/employee/${employee.ReportsTo}`}
-                    value={`${employee.ReportFirstName} ${employee.ReportLastName}`}
-                  />
-                ) : (
-                  false
-                )}
               </div>
             </div>
 
