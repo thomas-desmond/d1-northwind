@@ -91,7 +91,7 @@ const Employees = () => {
                       <td data-label="Name">
                         <Link
                           className="link"
-                          to={`/employee/${employee.Id}?id=${employee.Id}`}
+                          to={`/employee/${employee.Id}`}
                         >{`${employee.FirstName} ${employee.LastName}`}</Link>
                       </td>
                       <td data-label="Title">{employee.Title}</td>
