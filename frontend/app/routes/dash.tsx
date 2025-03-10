@@ -27,7 +27,7 @@ export default function Dash() {
     //TODO: use a loader
     const path = `${
       process.env.NODE_ENV === "production"
-        ? "https://api.cf-northwind.com"
+        ? "https://api.cf-dev-platform.com"
         : "http://127.0.0.1:8789"
     }/api/status`;
     fetch(path)
