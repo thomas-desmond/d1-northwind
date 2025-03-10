@@ -48,19 +48,23 @@ export const RecommendedProducts = ({
           </div>
         ) : (
           <>
-            <div className="flex flex-wrap gap-2 space-between">
-              {recommendedProducts
-                .sort((a, b) => b.score - a.score)
-                .map((product) => (
-                  <Link to={`/product/${product.id}`} key={product.id}>
-                    <div className="card hover:bg-gray-50">
-                      <div className="card-content">
-                        <p className="title is-4">{product.name}</p>
+            {recommendedProducts && recommendedProducts.length > 0 ? (
+              <div className="flex flex-wrap gap-2 space-between">
+                {recommendedProducts
+                  .sort((a, b) => b.score - a.score)
+                  .map((product) => (
+                    <Link to={`/product/${product.id}`} key={product.id}>
+                      <div className="card hover:bg-gray-50">
+                        <div className="card-content">
+                          <p className="title is-4">{product.name}</p>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-            </div>
+                    </Link>
+                  ))}
+              </div>
+            ) : (
+              <p>No recommended products available.</p>
+            )}
             <div className="mt-4 text-sm text-gray-500 border-t pt-2">
               Recommendations generated in: {fetchTime.toFixed(0)}ms
             </div>

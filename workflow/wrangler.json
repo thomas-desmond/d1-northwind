@@ -1,13 +1,9 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
+	"$schema": "../node_modules/wrangler/config-schema.json",
 	"name": "northwind-workflow",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-02-04",
-	"account_id": "d6850012d250c1600028b55d1d879b16",
+	"account_id": "4ada3fc2e7dcf09a09749af670622778",
 	"observability": {
 		"enabled": true
 	},
@@ -24,7 +20,7 @@
 		{
 			"binding": "DB",
 			"database_name": "northwind",
-			"database_id": "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
+			"database_id": "1247ada2-21d0-4a5a-920d-262951bbf53b"
 		}
 	],
 	"workflows": [

@@ -27,6 +27,6 @@ database_id = "1247ada2-21d0-4a5a-920d-262951bbf53b"
 binding = "PRODUCT_SEARCH_CACHE"
 id = "2780b6dfff604d9eab087fcade63ceb0"
 
-# [[vectorize]]
-# binding = "VECTORIZE"
-# index_name = "northwind-vector-db"
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "northwind-vector-db"
