@@ -3,7 +3,7 @@
 	"name": "northwind-queue-worker",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-01-24",
-	"account_id": "d6850012d250c1600028b55d1d879b16",
+	"account_id": "4ada3fc2e7dcf09a09749af670622778",
 	"observability": {
 		"enabled": true
 	},
@@ -31,11 +31,5 @@
 				"dead_letter_queue": "northwind-dead-letter"
 			}
 		]
-	},
-	"vectorize": [
-		{
-			"binding": "VECTORIZE",
-			"index_name": "tradewinds-vector-db"
-		}
-	]
+	}
 }
