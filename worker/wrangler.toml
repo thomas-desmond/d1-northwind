@@ -3,7 +3,7 @@ name = "northwind-worker"
 compatibility_flags = ["nodejs_compat"]
 compatibility_date = "2024-09-23"
 account_id = "4ada3fc2e7dcf09a09749af670622778"
-logpush = true
+# logpush = true
 
 # [[routes]]
 # pattern = "api.cf-northwind.com"
