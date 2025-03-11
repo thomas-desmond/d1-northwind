@@ -40,13 +40,13 @@ const Employees = () => {
     dispatch && data.stats && dispatch(data.stats);
   }, [dispatch, data.stats]);
 
-  // const setPage = (page: number) => {
-  //   navigate(`/employees?page=${page}`);
-  // };
+  const setPage = (page: number) => {
+    navigate(`/employees?page=${page}`);
+  };
 
   return (
     <>
-      {employees.length ? (
+      {employees && employees.length ? (
         <div className="card has-table">
           <header className="card-header">
             <p className="card-header-title">Employees</p>
