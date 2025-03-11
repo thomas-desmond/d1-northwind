@@ -40,9 +40,9 @@ const Employees = () => {
     dispatch && data.stats && dispatch(data.stats);
   }, [dispatch, data.stats]);
 
-  const setPage = (page: number) => {
-    navigate(`/employees?page=${page}`);
-  };
+  // const setPage = (page: number) => {
+  //   navigate(`/employees?page=${page}`);
+  // };
 
   return (
     <>
