@@ -5,7 +5,7 @@ import { useStatsDispatch } from "~/components/StatsContext";
 
 import type { LoaderFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useRouteError } from "@remix-run/react";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -43,7 +43,7 @@ const Employees = () => {
   const setPage = (page: number) => {
     navigate(`/employees?page=${page}`);
   };
-  
+
 
   return (
     <>
@@ -117,3 +117,19 @@ const Employees = () => {
 };
 
 export default Employees;
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  useEffect(() => {
+    if (error) {
+      window.location.reload();
+    }
+  }, [error]);
+
+  return (
+    <div className="card-content">
+      <h2>An error occurred. Refreshing the page...</h2>
+    </div>
+  );
+}
