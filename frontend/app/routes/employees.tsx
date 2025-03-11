@@ -8,33 +8,25 @@ import { json } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  try {
-    const url = new URL(request.url);
+  const url = new URL(request.url);
 
-    const page = Number(url.searchParams.get("page")) || 1;
-    const count = url.searchParams.get("count");
-    const search = url.searchParams.get("search");
+  const page = Number(url.searchParams.get("page")) || 1;
+  const count = url.searchParams.get("count");
+  const search = url.searchParams.get("search");
 
-    const rand = Math.floor(Math.random() * 1000001);
-    const path = `${
-      process.env.NODE_ENV === "production"
-        ? "https://api.cf-dev-platform.com"
-        : "http://127.0.0.1:8789"
-    }/api/employees?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
-      search ? `&search=${search}` : ""
-    }&rand=${rand}`;
+  const rand = Math.floor(Math.random() * 1000001);
+  const path = `${
+    process.env.NODE_ENV === "production"
+      ? "https://api.cf-dev-platform.com"
+      : "http://127.0.0.1:8789"
+  }/api/employees?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
+    search ? `&search=${search}` : ""
+  }&rand=${rand}`;
 
-    const res = await fetch(path);
-    const result = (await res.json()) as any;
+  const res = await fetch(path);
+  const result = (await res.json()) as any;
 
-    return json({ ...result });
-  } catch (error) {
-    console.error("Error loading employees:", error);
-    if (typeof window !== "undefined") {
-      window.location.reload();
-    }
-    throw error;
-  }
+  return json({ ...result });
 };
 type LoaderType = Awaited<ReturnType<typeof loader>>;
 
@@ -51,7 +43,6 @@ const Employees = () => {
   const setPage = (page: number) => {
     navigate(`/employees?page=${page}`);
   };
-
 
   return (
     <>
