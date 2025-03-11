@@ -44,6 +44,7 @@ const Employees = () => {
     navigate(`/employees?page=${page}`);
   };
 
+  
   return (
     <>
       {employees && employees.length ? (
