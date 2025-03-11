@@ -43,6 +43,7 @@ const Employees = () => {
   const setPage = (page: number) => {
     navigate(`/employees?page=${page}`);
   };
+  
 
   return (
     <>
