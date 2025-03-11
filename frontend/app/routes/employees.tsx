@@ -5,28 +5,36 @@ import { useStatsDispatch } from "~/components/StatsContext";
 
 import type { LoaderFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
-import { useLoaderData, useRouteError } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url);
+  try {
+    const url = new URL(request.url);
 
-  const page = Number(url.searchParams.get("page")) || 1;
-  const count = url.searchParams.get("count");
-  const search = url.searchParams.get("search");
+    const page = Number(url.searchParams.get("page")) || 1;
+    const count = url.searchParams.get("count");
+    const search = url.searchParams.get("search");
 
-  const rand = Math.floor(Math.random() * 1000001);
-  const path = `${
-    process.env.NODE_ENV === "production"
-      ? "https://api.cf-dev-platform.com"
-      : "http://127.0.0.1:8789"
-  }/api/employees?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
-    search ? `&search=${search}` : ""
-  }&rand=${rand}`;
+    const rand = Math.floor(Math.random() * 1000001);
+    const path = `${
+      process.env.NODE_ENV === "production"
+        ? "https://api.cf-dev-platform.com"
+        : "http://127.0.0.1:8789"
+    }/api/employees?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
+      search ? `&search=${search}` : ""
+    }&rand=${rand}`;
 
-  const res = await fetch(path);
-  const result = (await res.json()) as any;
+    const res = await fetch(path);
+    const result = (await res.json()) as any;
 
-  return json({ ...result });
+    return json({ ...result });
+  } catch (error) {
+    console.error("Error loading employees:", error);
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
+    throw error;
+  }
 };
 type LoaderType = Awaited<ReturnType<typeof loader>>;
 
@@ -117,19 +125,3 @@ const Employees = () => {
 };
 
 export default Employees;
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  useEffect(() => {
-    if (error) {
-      window.location.reload();
-    }
-  }, [error]);
-
-  return (
-    <div className="card-content">
-      <h2>An error occurred. Refreshing the page...</h2>
-    </div>
-  );
-}
