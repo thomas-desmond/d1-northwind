@@ -72,7 +72,7 @@ const Aside = () => {
             </li>
             <li>
               <NavLink
-                to="https://cf-dev-platform.com/employees"
+                to="/employees"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 <span className="icon material-icons">badge</span>
