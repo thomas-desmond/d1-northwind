@@ -49,6 +49,11 @@ export default function Index() {
           and Products, or you can use search if you know what you're looking
           for.
         </p>
+        <img
+          alt="Northwind Traders Logo"
+          className="object-scale-down w-fit pt-8 bg-white rounded-lg p-4"
+          src="https://imagedelivery.net/llMDWXFPgX44M9elMfQ9XA/95ff22b1-b3ef-43ff-aaa8-d8cfb34ff900/public"
+        />
       </div>
     </>
   )
