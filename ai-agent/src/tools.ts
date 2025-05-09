@@ -8,6 +8,29 @@ import { z } from "zod";
 import type { Chat } from "./server";
 import { getCurrentAgent } from "agents";
 import { unstable_scheduleSchema } from "agents/schedule";
+import { env } from "cloudflare:workers";
+
+const getInventoryByProductName = tool({
+  description: "Search the database inventory by product name",
+  parameters: z.object({
+    name: z.string(),
+  }),
+  execute: async ({ name }) => {
+    return await env.DB.prepare(
+      `SELECT UnitsInStock FROM product WHERE ProductName = ?`
+    )
+      .bind(name)
+      .first();
+  },
+});
+
+const updateInventoryByProductName = tool({
+  description: "Update the database inventory by product name",
+  parameters: z.object({
+    name: z.string(),
+    unitsInStock: z.number(),
+  })
+});
 
 /**
  * Weather information tool that requires human confirmation
@@ -119,6 +142,8 @@ export const tools = {
   scheduleTask,
   getScheduledTasks,
   cancelScheduledTask,
+  getInventoryByProductName,
+  updateInventoryByProductName,
 };
 
 /**
@@ -130,5 +155,13 @@ export const executions = {
   getWeatherInformation: async ({ city }: { city: string }) => {
     console.log(`Getting weather information for ${city}`);
     return `The weather in ${city} is sunny`;
+  },
+
+  updateInventoryByProductName: async ({ name, unitsInStock }: { name: string, unitsInStock: number }) => {
+    return await env.DB.prepare(
+      `Update Product Set UnitsInStock = ? WHERE ProductName = ?`
+    )
+      .bind(unitsInStock, name)
+      .all();
   },
 };

@@ -27,6 +27,7 @@ import {
 // List of tools that require human confirmation
 const toolsRequiringConfirmation: (keyof typeof tools)[] = [
   "getWeatherInformation",
+  "updateInventoryByProductName",
 ];
 
 export default function Chat() {
