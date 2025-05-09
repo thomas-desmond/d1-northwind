@@ -1,5 +1,25 @@
 {
     "cSpell.words": [
         "northwind"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#f69c50",
+        "activityBar.background": "#f69c50",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#06793b",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#15202b99",
+        "sash.hoverBorder": "#f69c50",
+        "statusBar.background": "#f38020",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#d5670b",
+        "statusBarItem.remoteBackground": "#f38020",
+        "statusBarItem.remoteForeground": "#15202b",
+        "titleBar.activeBackground": "#f38020",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#f3802099",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "f38020"
 }
