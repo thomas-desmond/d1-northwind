@@ -10,17 +10,23 @@ import {
   type StreamTextOnFinishCallback,
   type ToolSet,
 } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { processToolCalls } from "./utils";
 import { tools, executions } from "./tools";
+import { createAiGateway } from "ai-gateway-provider";
+
 // import { env } from "cloudflare:workers";
 
-const model = openai("gpt-4o-2024-11-20");
-// Cloudflare AI Gateway
-// const openai = createOpenAI({
-//   apiKey: env.OPENAI_API_KEY,
-//   baseURL: env.GATEWAY_BASE_URL,
-// });
+const aiGateway = createAiGateway({
+  accountId: "4ada3fc2e7dcf09a09749af670622778",
+  gateway: "northwind-ai-agent",
+});
+
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const model = aiGateway([openai("gpt-4o-2024-11-20")]);
 
 /**
  * Chat Agent implementation that handles real-time AI chat interactions
