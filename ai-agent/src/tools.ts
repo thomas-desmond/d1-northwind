@@ -39,7 +39,7 @@ const getCustomerInformation = tool({
   }),
   execute: async ({ customerName }) => {
     return await env.DB.prepare(
-      `SELECT CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax 
+      `SELECT Id, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax 
        FROM Customer 
        WHERE CompanyName LIKE ? OR ContactName LIKE ?
        LIMIT 10`
