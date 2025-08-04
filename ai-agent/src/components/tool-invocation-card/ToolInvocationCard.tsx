@@ -114,7 +114,7 @@ export function ToolInvocationCard({
               <pre className="bg-background/80 p-2 rounded-md text-xs overflow-auto whitespace-pre-wrap break-words max-w-[450px]">
                 {(() => {
                   const result = toolInvocation.result;
-                  if (typeof result === "object" && result.content) {
+                  if (typeof result === "object" && result?.content) {
                     return result.content
                       .map((item: { type: string; text: string }) => {
                         if (
