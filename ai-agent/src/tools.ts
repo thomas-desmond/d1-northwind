@@ -32,6 +32,23 @@ const updateInventoryByProductName = tool({
   })
 });
 
+const getCustomerInformation = tool({
+  description: "Get customer information by customer name or company name",
+  parameters: z.object({
+    customerName: z.string().describe("Customer name or company name to search for"),
+  }),
+  execute: async ({ customerName }) => {
+    return await env.DB.prepare(
+      `SELECT CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax 
+       FROM Customer 
+       WHERE CompanyName LIKE ? OR ContactName LIKE ?
+       LIMIT 10`
+    )
+      .bind(`%${customerName}%`, `%${customerName}%`)
+      .all();
+  },
+});
+
 /**
  * Weather information tool that requires human confirmation
  * When invoked, this will present a confirmation dialog to the user
@@ -144,6 +161,7 @@ export const tools = {
   cancelScheduledTask,
   getInventoryByProductName,
   updateInventoryByProductName,
+  getCustomerInformation,
 };
 
 /**
