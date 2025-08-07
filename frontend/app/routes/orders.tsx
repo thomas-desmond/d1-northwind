@@ -34,7 +34,7 @@ export const loader: LoaderFunction = async ({
   const rand = Math.floor(Math.random() * 1000001);
   const path = `${
     process.env.NODE_ENV === "production"
-      ? "https://api.cf-dev-platform.com"
+      ? "https://api.cf-northwind.com"
       : "http://127.0.0.1:8789"
   }/api/orders?page=${page}${Number(count) > 0 ? `` : `&count=true`}${
     search ? `&search=${search}` : ""

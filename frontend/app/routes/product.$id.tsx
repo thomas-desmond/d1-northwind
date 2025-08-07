@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   const rand = Math.floor(Math.random() * 1000001);
   const path = `${
     process.env.NODE_ENV === "production"
-      ? "https://api.cf-dev-platform.com"
+      ? "https://api.cf-northwind.com"
       : "http://127.0.0.1:8789"
   }/api/product?Id=${params.id}&rand=${rand}`;
 
