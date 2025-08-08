@@ -2,11 +2,11 @@ main = "index.ts"
 name = "northwind-worker"
 compatibility_flags = ["nodejs_compat"]
 compatibility_date = "2024-09-23"
-account_id = "4ada3fc2e7dcf09a09749af670622778"
+account_id = "d6850012d250c1600028b55d1d879b16"
 # logpush = true
 
 [[routes]]
-pattern = "api.cf-dev-platform.com"
+pattern = "api.cf-northwind.com"
 custom_domain = true
 
 [observability]
