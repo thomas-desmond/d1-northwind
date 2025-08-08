@@ -21,11 +21,11 @@ mode = "smart"
 [[d1_databases]]
 binding = "DB"
 database_name = "northwind"
-database_id = "1247ada2-21d0-4a5a-920d-262951bbf53b"
+database_id = "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
 
 [[kv_namespaces]]
 binding = "PRODUCT_SEARCH_CACHE"
-id = "2780b6dfff604d9eab087fcade63ceb0"
+id = "fb5a73689cfa48f7a901706440c193af"
 
 [[vectorize]]
 binding = "VECTORIZE"
