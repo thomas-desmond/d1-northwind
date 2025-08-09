@@ -13,13 +13,9 @@ import {
 import { openai } from "@ai-sdk/openai";
 import { processToolCalls } from "./utils";
 import { tools, executions } from "./tools";
-import { env } from "cloudflare:workers";
+// import { env } from "cloudflare:workers";
 
 const model = openai("gpt-4o-2024-11-20");
-// const workersai = createWorkersAI({ binding: env.AI });
-// const model = workersai("@cf/meta/llama-3.3-70b-instruct-fp8-fast");
-
-
 // Cloudflare AI Gateway
 // const openai = createOpenAI({
 //   apiKey: env.OPENAI_API_KEY,
