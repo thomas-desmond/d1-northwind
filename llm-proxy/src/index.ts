@@ -36,9 +36,9 @@ export default {
       const url = new URL(request.url);
       const originalPath = url.pathname;
       
-      // Construct the proper Mistral API URL
+      // Construct the proper OpenAI API URL
       url.protocol = 'https:';
-      url.hostname = 'api.mistral.ai';
+      url.hostname = 'api.openai.com';
       url.port = ''; // Remove any port from the original request
       url.pathname = '/v1' + url.pathname; // Prepend /v1 to the existing path
 
