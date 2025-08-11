@@ -63,8 +63,6 @@ export class Chat extends AIChatAgent<Env> {
         const result = streamText({
           model,
           system: `You are a business assistant for Northwind Traders food company. Use available tools to query inventory and business data. Present results in natural language, not raw data formats. Be professional and helpful.
-
-${unstable_getSchedulePrompt({ date: new Date() })}
 `,
           messages: processedMessages,
           tools: allTools,
