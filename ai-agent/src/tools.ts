@@ -32,25 +32,6 @@ const updateInventoryByProductName = tool({
   }),
 });
 
-const getCustomerInformation = tool({
-  description: "Get customer information by customer name or company name",
-  parameters: z.object({
-    customerName: z
-      .string()
-      .describe("Customer name or company name to search for"),
-  }),
-  execute: async ({ customerName }) => {
-    return await env.DB.prepare(
-      `SELECT Id, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax 
-       FROM Customer 
-       WHERE CompanyName LIKE ? OR ContactName LIKE ?
-       LIMIT 10`
-    )
-      .bind(`%${customerName}%`, `%${customerName}%`)
-      .all();
-  },
-});
-
 const scheduleTask = tool({
   description: "A tool to schedule a task to be executed at a later time",
   parameters: unstable_scheduleSchema,
@@ -135,7 +116,6 @@ export const tools = {
   getScheduledTasks,
   cancelScheduledTask,
   updateInventoryByProductName,
-  getCustomerInformation,
   getInventoryByProductName
 };
 
