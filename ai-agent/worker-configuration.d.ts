@@ -4,6 +4,7 @@
 declare namespace Cloudflare {
 	interface Env {
 		OPENAI_API_KEY: string;
+        PROXY_BASE_URL: string;
 		Chat: DurableObjectNamespace<import("./src/server").Chat>;
         DB: D1Database;
         AI: AI;
