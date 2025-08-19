@@ -18,7 +18,7 @@ import { env } from "cloudflare:workers";
 
 const openaiWithProxy = createOpenAI({
   apiKey: env.OPENAI_API_KEY,
-  baseURL: env.PROXY_BASE_URL,
+  baseURL: "https://gateway.ai.cloudflare.com/v1/d6850012d250c1600028b55d1d879b16/northwind-agent-gateway/openai",
 });
 
 const model = openaiWithProxy("gpt-4o-2024-11-20");
@@ -56,14 +56,14 @@ export class Chat extends AIChatAgent<Env> {
           messages: this.messages,
           dataStream,
           tools: allTools,
-          executions,
+          executions
         });
 
-        // Stream the AI response using GPT-4
+
+        // Stream the AI response using GPT-4 with simple prompt
         const result = streamText({
           model,
-          system: `You are a business assistant for Northwind Traders food company. Use available tools to query inventory and business data. Present results in natural language, not raw data formats. Be professional and helpful.
-`,
+          system: `You are a business assistant for Northwind Traders food company. Use available tools to query inventory. Present results in natural language, not raw data formats. Be professional and helpful.`,
           messages: processedMessages,
           tools: allTools,
           onFinish: async (args) => {
