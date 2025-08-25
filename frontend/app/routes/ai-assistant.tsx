@@ -14,21 +14,48 @@ export default function AIAssistant() {
     setResults("");
 
     try {
-      const endpoint = category === "inventory" ? "/api/inventory-assistant" : "/api/customer-assistant";
+      const endpoint = category === "inventory" 
+        ? "https://ai-assistant.cf-northwind.com/ai/inventory" 
+        : "/api/customer-assistant";
+      
+      const requestBody = category === "inventory"
+        ? {
+            messages: [
+              {
+                role: "user",
+                content: query
+              }
+            ]
+          }
+        : { query };
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.text();
-      setResults(data);
+      const data = await response.json() as any;
+      
+      // Extract content from the last assistant message
+      if (data && data.messages && Array.isArray(data.messages) && data.messages.length > 0) {
+        // Find the last assistant message
+        const assistantMessages = data.messages.filter((msg: any) => msg.role === 'assistant');
+        if (assistantMessages.length > 0) {
+          const lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
+          setResults(lastAssistantMessage.content || JSON.stringify(data));
+        } else {
+          setResults(JSON.stringify(data));
+        }
+      } else {
+        setResults(JSON.stringify(data));
+      }
     } catch (error) {
       setResults(`Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`);
     } finally {
