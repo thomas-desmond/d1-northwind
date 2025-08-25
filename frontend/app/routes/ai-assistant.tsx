@@ -6,49 +6,48 @@ export default function AIAssistant() {
   const [results, setResults] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-
+  const handleInventorySubmit = async () => {
     setIsLoading(true);
     setResults("");
 
     try {
-      const endpoint = category === "inventory" 
-        ? "https://ai-assistant.cf-northwind.com/ai/inventory" 
-        : "/api/customer-assistant";
-      
-      const requestBody = category === "inventory"
-        ? {
+      const response = await fetch(
+        "https://ai-assistant.cf-northwind.com/ai/inventory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             messages: [
               {
                 role: "user",
-                content: query
-              }
-            ]
-          }
-        : { query };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+                content: query,
+              },
+            ],
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json() as any;
-      
+      const data = (await response.json()) as any;
+
       // Extract content from the last assistant message
-      if (data && data.messages && Array.isArray(data.messages) && data.messages.length > 0) {
-        // Find the last assistant message
-        const assistantMessages = data.messages.filter((msg: any) => msg.role === 'assistant');
+      if (
+        data &&
+        data.messages &&
+        Array.isArray(data.messages) &&
+        data.messages.length > 0
+      ) {
+        const assistantMessages = data.messages.filter(
+          (msg: any) => msg.role === "assistant"
+        );
         if (assistantMessages.length > 0) {
-          const lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
+          const lastAssistantMessage =
+            assistantMessages[assistantMessages.length - 1];
           setResults(lastAssistantMessage.content || JSON.stringify(data));
         } else {
           setResults(JSON.stringify(data));
@@ -57,9 +56,79 @@ export default function AIAssistant() {
         setResults(JSON.stringify(data));
       }
     } catch (error) {
-      setResults(`Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`);
+      setResults(
+        `Error: ${
+          error instanceof Error ? error.message : "Unknown error occurred"
+        }`
+      );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCustomerSubmit = async () => {
+    setIsLoading(true);
+    setResults("");
+
+    try {
+      const response = await fetch(
+        "https://ai-assistant.cf-northwind.com/ai/customer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt: query }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = (await response.json()) as any;
+
+      // Parse and format the customer data nicely
+      if (
+        data &&
+        data.matches &&
+        Array.isArray(data.matches) &&
+        data.matches.length > 0
+      ) {
+        const matches = data.matches
+          .map((match: any, index: number) => {
+            const id = match.id || "N/A";
+            const creditCard = match.metadata?.creditCard || "N/A";
+
+            return `
+ID: ${id}
+Credit Card: ${creditCard}`;
+          })
+          .join("\n\n");
+
+        setResults(matches);
+      } else {
+        setResults(JSON.stringify(data));
+      }
+    } catch (error) {
+      setResults(
+        `Error: ${
+          error instanceof Error ? error.message : "Unknown error occurred"
+        }`
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+
+    if (category === "inventory") {
+      await handleInventorySubmit();
+    } else {
+      await handleCustomerSubmit();
     }
   };
 
@@ -109,7 +178,9 @@ export default function AIAssistant() {
                   <div className="control">
                     <button
                       type="submit"
-                      className={`button is-primary ${isLoading ? "is-loading" : ""}`}
+                      className={`button is-primary ${
+                        isLoading ? "is-loading" : ""
+                      }`}
                       disabled={isLoading || !query.trim()}
                     >
                       <span className="icon">
@@ -142,7 +213,10 @@ export default function AIAssistant() {
                   </div>
                 ) : (
                   <div className="content">
-                    <pre className="has-background-light p-4" style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+                    <pre
+                      className="has-background-light p-4"
+                      style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}
+                    >
                       {results}
                     </pre>
                   </div>
