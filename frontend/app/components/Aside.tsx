@@ -28,6 +28,13 @@ const Aside = () => {
                 <span className="icon material-icons">display_settings</span>
                 <span className="menu-item-label">Dashboard</span>
               </NavLink>
+              <NavLink
+                to="/ai-assistant"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                <span className="icon material-icons">smart_toy</span>
+                <span className="menu-item-label">AI Assistant</span>
+              </NavLink>
             </li>
           </ul>
           <p className="menu-label">Backoffice</p>
