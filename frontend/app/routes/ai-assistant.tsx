@@ -117,9 +117,7 @@ Credit Card: ${creditCard}`;
       }
     } catch (error) {
       setResults(
-        `Error: ${
-          error instanceof Error ? error.message : "Unknown error occurred"
-        }`
+        `Error: Blocked by security policy`
       );
     } finally {
       setIsLoading(false);
