@@ -82,13 +82,19 @@ export default function AIAssistant() {
         }
       );
 
+      // Handle WAF/Firewall for AI blocking due to PII detection
+      if (response.status === 403) {
+        const errorText = await response.text();
+        setResults(`🚫 Request Blocked Error Details: ${errorText}`);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = (await response.json()) as any;
 
-      // Parse and format the customer data nicely
       if (
         data &&
         data.matches &&
