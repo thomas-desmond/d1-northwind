@@ -82,25 +82,14 @@ export default function AIAssistant() {
         }
       );
 
-      // Handle WAF/Firewall for AI blocking due to PII detection
-      if (response.status === 403) {
-        const errorText = (await response.json()) as { message?: string };
-        setResults(
-          `🚫 Request Blocked Error Details: ${
-            errorText.message || "Access denied"
-          }`
-        );
-        return;
-      }
-
       if (!response.ok) {
-        const errorText = (await response.json()) as { message?: string };
-        setResults(
-          `🚫 Response !ok Details: ${
-            errorText.message || "Access denied"
-          }`
-        );
-        return;
+        if (response.status === 403) {
+            // Parse the JSON body of the response
+            return response.json().then((errorData: any) => {
+              throw new Error(errorData.message || 'Access forbidden');
+            });
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = (await response.json()) as any;
