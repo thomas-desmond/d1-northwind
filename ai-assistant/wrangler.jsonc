@@ -4,12 +4,25 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "ai-assistant",
+	"name": "northwind-ai-assistant",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-08-28",
 	"observability": {
 		"enabled": true
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "northwind",
+			"database_id": "d2757109-c1bf-4a66-b325-4d9c09b3e3a7"
+		}
+	],
+	"vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "northwind-customer-ai-assistant"
+		}
+	]
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
