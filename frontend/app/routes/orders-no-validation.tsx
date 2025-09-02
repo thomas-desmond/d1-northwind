@@ -96,51 +96,9 @@ const OrdersNoValidation = () => {
     navigate(`?${params.toString()}`);
   };
 
-  const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newToken = event.target.value;
-    if (selectedToken !== newToken) {
-      setSelectedToken(newToken);
-      setOrders([]);
-      setTotal(0);
-      setFetchTime(0);
-    }
-  };
-
-  const handleGetOrders = () => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("token", selectedToken);
-    navigate(`?${params.toString()}`);
-  };
-
   return (
     <>
-      <h1 className="text-2xl font-bold mb-4">Orders (No JWT Validation)</h1>
-      <div>
-        <label className="mr-2">Log In As:</label>
-        {[
-          { key: "admin", label: "Administrator" },
-          { key: "user", label: "User 'Around The Horn'" },
-        ].map(({ key, label }) => (
-          <label key={key} className="radio-inline mr-2">
-            <input
-              type="radio"
-              name="token"
-              value={key}
-              checked={selectedToken === key}
-              onChange={handleTokenChange}
-              className="mr-1"
-            />
-            {label}
-          </label>
-        ))}
-        <button
-          onClick={handleGetOrders}
-          className="button"
-          style={{ backgroundColor: "#87CEEB" }}
-        >
-          Get Orders
-        </button>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Orders</h1>
       {data.error && (
         <div className="card-content">
           <h2>{data.error}</h2>
