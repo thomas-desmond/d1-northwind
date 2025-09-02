@@ -59,7 +59,7 @@ const Aside = () => {
                 <span className="menu-item-label">Products</span>
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/orders"
                 className={({ isActive }) => (isActive ? "active" : "")}
@@ -67,14 +67,14 @@ const Aside = () => {
                 <span className="icon material-icons">shopping_cart</span>
                 <span className="menu-item-label">Orders</span>
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink
                 to="/orders-no-validation"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 <span className="icon material-icons">shopping_cart</span>
-                <span className="menu-item-label">Orders (No JWT)</span>
+                <span className="menu-item-label">Orders</span>
               </NavLink>
             </li>
             <li>
