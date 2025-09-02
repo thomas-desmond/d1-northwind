@@ -106,7 +106,7 @@ export default function AIAssistant() {
             const creditCard = match.metadata?.creditCard || "N/A";
 
             return `
-ID: ${id}
+Customer Name: ${id}
 Credit Card: ${creditCard}`;
           })
           .join("\n\n");
