@@ -228,6 +228,27 @@ Credit Card: ${creditCard}`;
             </div>
           </div>
         )}
+
+        {/* Architecture Diagram Section */}
+        <div className="tile is-parent mt-6">
+          <div className="card tile is-child">
+            <header className="card-header">
+              <p className="card-header-title">
+                <span className="icon material-icons">architecture</span>
+                AI App Architecture
+              </p>
+            </header>
+            <div className="card-content">
+              <div className="has-text-centered">
+                <img 
+                  src="/ai-app-architecture.png" 
+                  alt="AI App Architecture Diagram" 
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
