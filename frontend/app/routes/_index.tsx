@@ -23,7 +23,7 @@ export default function Index() {
         <img
           alt="Northwind Reference Architecture"
           className="object-scale-down w-full max-w-4xl bg-white rounded-lg p-4"
-          src="https://imagedelivery.net/llMDWXFPgX44M9elMfQ9XA/95ff22b1-b3ef-43ff-aaa8-d8cfb34ff900/public"
+          src="/cf-northwind-app.png"
         />
         <span className="text-sm text-gray-400 pt-2">Reference architecture: Remix + Workers + D1 + KV + Vectorize</span>
       </div>

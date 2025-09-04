@@ -239,11 +239,11 @@ Credit Card: ${creditCard}`;
               </p>
             </header>
             <div className="card-content">
-              <div className="has-text-centered">
+              <div className="has-text-centered max-w-6xl">
                 <img 
                   src="/ai-app-architecture.png" 
                   alt="AI App Architecture Diagram" 
-                  style={{ maxWidth: "100%", height: "auto" }}
+                  style={{ maxWidth: "auto", height: "100%" }}
                 />
               </div>
             </div>
