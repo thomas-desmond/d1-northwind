@@ -1,9 +1,17 @@
 
 const sampleData = [
 	{
-		company: 'Bon app',
+		textMatch: 'Rattlesnake Canyon Grocer',
 		metadata: {
+			companyName: 'Rattlesnake Canyon Grocer',
 			creditCard: '1234-1234-1234-1234',
+		},
+	},
+	{
+		textMatch: 'Best Customer',
+		metadata: {
+			companyName: 'Rattlesnake Canyon Grocer',
+			yearlySpend: '5,000,000',
 		},
 	},
 ];
@@ -64,28 +72,39 @@ export default {
 
 		// You only need to insert vectors into your index once
 		if (path.startsWith('/insert')) {
-			const embeddings = await env.AI.run(
-				'@cf/baai/bge-base-en-v1.5',
-				{
-					text: sampleData[0].company,
-				},
-				{
-					gateway: {
-						id: 'northwind-ai-gateway',
-						skipCache: false,
-					},
-				}
-			);
-			const values = embeddings.data[0];
+			const vectorsToInsert = [];
 
-			// Insert vector with metadata - the company name as ID and metadata object
-			const vectorsToInsert = [
-				{
-					id: sampleData[0].company, // Company name as the index/ID
+			// Loop through all sample data entries
+			for (const data of sampleData) {
+				const embeddings = await env.AI.run(
+					'@cf/baai/bge-base-en-v1.5',
+					{
+						text: data.textMatch,
+					},
+					{
+						gateway: {
+							id: 'northwind-ai-gateway',
+							skipCache: false,
+						},
+					}
+				);
+				const values = embeddings.data[0];
+
+				// Add vector with metadata to the batch
+				// Filter out undefined values from metadata
+				const cleanMetadata: Record<string, string> = {};
+				for (const [key, value] of Object.entries(data.metadata)) {
+					if (value !== undefined) {
+						cleanMetadata[key] = value;
+					}
+				}
+				
+				vectorsToInsert.push({
+					id: data.textMatch, // Use textMatch as the index/ID
 					values: values, // The embedding vector
-					metadata: sampleData[0].metadata, // Your metadata object
-				},
-			];
+					metadata: cleanMetadata, // Your metadata object
+				});
+			}
 
 			const inserted = await env.VECTORIZE.insert(vectorsToInsert);
 

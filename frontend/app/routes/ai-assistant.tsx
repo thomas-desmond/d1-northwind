@@ -153,12 +153,22 @@ export default function AIAssistant() {
         ) {
           const matches = data.matches
             .map((match: any, index: number) => {
-              const id = match.id || "N/A";
-              const creditCard = match.metadata?.creditCard || "N/A";
+              const companyName = match.metadata?.companyName || "N/A";
+              const creditCard = match.metadata?.creditCard;
+              const yearlySpend = match.metadata?.yearlySpend;
 
-              return `
-Customer Name: ${id}
+              let result = `
+Company Name: ${companyName}`;
+
+              if (creditCard) {
+                result += `
 Credit Card: ${creditCard}`;
+              } else if (yearlySpend) {
+                result += `
+Yearly Spend: ${yearlySpend}`;
+              }
+
+              return result;
             })
             .join("\n\n");
 
