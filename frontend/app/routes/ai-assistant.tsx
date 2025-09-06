@@ -91,11 +91,6 @@ export default function AIAssistant() {
 
   const isLoading = fetcher.state === "submitting";
 
-  // Clear results when category changes
-  useEffect(() => {
-    setResults("");
-  }, [category]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
@@ -141,11 +136,7 @@ export default function AIAssistant() {
             const lastAssistantMessage =
               assistantMessages[assistantMessages.length - 1];
             newResults = lastAssistantMessage.content || JSON.stringify(data);
-          } else {
-            newResults = JSON.stringify(data);
           }
-        } else {
-          newResults = JSON.stringify(data);
         }
       } else {
         // Customer data processing
@@ -177,9 +168,7 @@ Yearly Spend: ${yearlySpend}`;
             .join("\n\n");
 
           newResults = matches;
-        } else {
-          newResults = JSON.stringify(data);
-        }
+        } 
       }
 
       if (results !== newResults) {
