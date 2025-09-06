@@ -1,145 +1,178 @@
 import { useState } from "react";
+import type { ActionFunction } from "@remix-run/cloudflare";
+import { json } from "@remix-run/cloudflare";
+import { useFetcher } from "@remix-run/react";
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const category = formData.get("category") as string;
+  const query = formData.get("query") as string;
+
+  try {
+    let url: string;
+    let body: any;
+
+    if (category === "inventory") {
+      url = "https://ai-assistant.cf-northwind.com/ai/inventory";
+      body = JSON.stringify({
+        messages: [
+          {
+            role: "user",
+            content: query,
+          },
+        ],
+      });
+    } else {
+      url = "https://ai-assistant.cf-northwind.com/ai/customer";
+      body = JSON.stringify({ prompt: query });
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+
+    if (!response.ok) {
+      console.log("RESPONSE not okay")
+      if (response.status === 403) {
+        console.log("RESPONSE 403")
+        // Try to parse the error response
+        try {
+          console.log("RESPONSE ",response)
+          const errorData = await response.json();
+          console.log("ERRORRRORORRR",errorData)
+          return json(
+            { 
+              success: false, 
+              error: "blocked_by_security", 
+              message: errorData.message || "Request blocked by security policy" 
+            },
+            { status: 403 }
+          );
+        } catch {
+          return json(
+            { 
+              success: false, 
+              error: "blocked_by_security", 
+              message: "Request blocked by security policy" 
+            },
+            { status: 403 }
+          );
+        }
+      }
+      return json(
+        { success: false, error: "http_error", message: `HTTP error! status: ${response.status}` },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return json({ success: true, data });
+  } catch (error) {
+    return json(
+      { 
+        success: false, 
+        error: "network_error", 
+        message: error instanceof Error ? error.message : "Network error occurred" 
+      },
+      { status: 500 }
+    );
+  }
+};
 
 export default function AIAssistant() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("inventory");
   const [results, setResults] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const fetcher = useFetcher();
 
-  const handleInventorySubmit = async () => {
-    setIsLoading(true);
-    setResults("");
+  const isLoading = fetcher.state === "submitting";
 
-    try {
-      const response = await fetch(
-        "https://ai-assistant.cf-northwind.com/ai/inventory",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: "user",
-                content: query,
-              },
-            ],
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = (await response.json()) as any;
-
-      // Extract content from the last assistant message
-      if (
-        data &&
-        data.messages &&
-        Array.isArray(data.messages) &&
-        data.messages.length > 0
-      ) {
-        const assistantMessages = data.messages.filter(
-          (msg: any) => msg.role === "assistant"
-        );
-        if (assistantMessages.length > 0) {
-          const lastAssistantMessage =
-            assistantMessages[assistantMessages.length - 1];
-          setResults(lastAssistantMessage.content || JSON.stringify(data));
-        } else {
-          setResults(JSON.stringify(data));
-        }
-      } else {
-        setResults(JSON.stringify(data));
-      }
-    } catch (error) {
-      setResults(
-        `Error: ${
-          error instanceof Error ? error.message : "Unknown error occurred"
-        }`
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCustomerSubmit = async () => {
-    setIsLoading(true);
-    setResults("");
-
-    try {
-      const response = await fetch(
-        "https://ai-assistant.cf-northwind.com/ai/customer",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: query }),
-        }
-      );
-
-      if (!response.ok) {
-        console.log("In If Not Ok");
-        if (response.status === 403) {
-          console.log("In If 403");
-          // Parse the JSON body of the response
-          return response.json().then((errorData: any) => {
-            throw new Error(errorData.message || "Access forbidden");
-          });
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = (await response.json()) as any;
-
-      if (
-        data &&
-        data.matches &&
-        Array.isArray(data.matches) &&
-        data.matches.length > 0
-      ) {
-        const matches = data.matches
-          .map((match: any, index: number) => {
-            const id = match.id || "N/A";
-            const creditCard = match.metadata?.creditCard || "N/A";
-
-            return `
-Customer Name: ${id}
-Credit Card: ${creditCard}`;
-          })
-          .join("\n\n");
-
-        setResults(matches);
-      } else {
-        setResults(JSON.stringify(data));
-      }
-    } catch (error) {
-      console.log("In Catch Error");
-      console.log(error);
-      setResults(
-        `Error: ${
-          error instanceof Error ? error.message : "Blocked by security policy"
-        }`
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
-    if (category === "inventory") {
-      await handleInventorySubmit();
-    } else {
-      await handleCustomerSubmit();
-    }
+    const formData = new FormData();
+    formData.append("category", category);
+    formData.append("query", query);
+
+    fetcher.submit(formData, { method: "post" });
   };
+
+  // Handle the response from the action
+  if (fetcher.data && fetcher.state === "idle") {
+    const response = fetcher.data as any;
+    
+    if (!response.success) {
+      if (response.error === "blocked_by_security") {
+        if (results !== `Security Policy Block: ${response.message}`) {
+          setResults(`Security Policy Block: ${response.message}`);
+        }
+      } else {
+        if (results !== `Error: ${response.message}`) {
+          setResults(`Error: ${response.message}`);
+        }
+      }
+    } else {
+      // Process successful response
+      const data = response.data;
+      let newResults = "";
+
+      if (category === "inventory") {
+        // Extract content from the last assistant message
+        if (
+          data &&
+          data.messages &&
+          Array.isArray(data.messages) &&
+          data.messages.length > 0
+        ) {
+          const assistantMessages = data.messages.filter(
+            (msg: any) => msg.role === "assistant"
+          );
+          if (assistantMessages.length > 0) {
+            const lastAssistantMessage =
+              assistantMessages[assistantMessages.length - 1];
+            newResults = lastAssistantMessage.content || JSON.stringify(data);
+          } else {
+            newResults = JSON.stringify(data);
+          }
+        } else {
+          newResults = JSON.stringify(data);
+        }
+      } else {
+        // Customer data processing
+        if (
+          data &&
+          data.matches &&
+          Array.isArray(data.matches) &&
+          data.matches.length > 0
+        ) {
+          const matches = data.matches
+            .map((match: any, index: number) => {
+              const id = match.id || "N/A";
+              const creditCard = match.metadata?.creditCard || "N/A";
+
+              return `
+Customer Name: ${id}
+Credit Card: ${creditCard}`;
+            })
+            .join("\n\n");
+
+          newResults = matches;
+        } else {
+          newResults = JSON.stringify(data);
+        }
+      }
+
+      if (results !== newResults) {
+        setResults(newResults);
+      }
+    }
+  }
 
   return (
     <div className="tile is-ancestor">
