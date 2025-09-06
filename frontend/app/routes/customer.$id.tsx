@@ -77,6 +77,10 @@ const Customer = () => {
                   false
                 )}
                 <AddTableField
+                  name="Credit Card"
+                  value="**** **** **** **** (Redacted for security)"
+                />
+                <AddTableField
                   name="Plan"
                   value={paymentSuccess ? "Pro Plan" : "Not on Pro Plan"}
                 />
