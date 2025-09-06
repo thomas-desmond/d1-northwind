@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ActionFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { useFetcher } from "@remix-run/react";
@@ -91,6 +91,10 @@ export default function AIAssistant() {
 
   const isLoading = fetcher.state === "submitting";
 
+  // Clear results when category changes
+  useEffect(() => {
+    setResults("");
+  }, [category]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
