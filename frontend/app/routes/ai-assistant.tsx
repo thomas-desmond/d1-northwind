@@ -83,13 +83,15 @@ export default function AIAssistant() {
       );
 
       if (!response.ok) {
+        console.log("In If Not Ok");
         if (response.status === 403) {
-            // Parse the JSON body of the response
-            return response.json().then((errorData: any) => {
-              throw new Error(errorData.message || 'Access forbidden');
-            });
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
+          console.log("In If 403");
+          // Parse the JSON body of the response
+          return response.json().then((errorData: any) => {
+            throw new Error(errorData.message || "Access forbidden");
+          });
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = (await response.json()) as any;
@@ -116,8 +118,12 @@ Credit Card: ${creditCard}`;
         setResults(JSON.stringify(data));
       }
     } catch (error) {
+      console.log("In Catch Error");
+      console.log(error);
       setResults(
-        `Error: Blocked by security policy`
+        `Error: ${
+          error instanceof Error ? error.message : "Blocked by security policy"
+        }`
       );
     } finally {
       setIsLoading(false);
@@ -240,9 +246,9 @@ Credit Card: ${creditCard}`;
             </header>
             <div className="card-content">
               <div className="has-text-centered max-w-6xl">
-                <img 
-                  src="/ai-app-architecture.png" 
-                  alt="AI App Architecture Diagram" 
+                <img
+                  src="/ai-app-architecture.png"
+                  alt="AI App Architecture Diagram"
                   style={{ maxWidth: "auto", height: "100%" }}
                 />
               </div>
