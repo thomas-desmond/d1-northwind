@@ -1,16 +1,16 @@
 
 const sampleData = [
 	{
-		textMatch: 'Rattlesnake Canyon Grocer',
+		textMatch: 'Rattlesnake Canyon Grocery',
 		metadata: {
-			companyName: 'Rattlesnake Canyon Grocer',
+			companyName: 'Rattlesnake Canyon Grocery',
 			creditCard: '1234-1234-1234-1234',
 		},
 	},
 	{
 		textMatch: 'Best Customer',
 		metadata: {
-			companyName: 'Rattlesnake Canyon Grocer',
+			companyName: 'Rattlesnake Canyon Grocery',
 			yearlySpend: '5,000,000',
 		},
 	},
@@ -72,6 +72,9 @@ export default {
 
 		// You only need to insert vectors into your index once
 		if (path.startsWith('/insert')) {
+			await env.VECTORIZE.deleteByIds(['Rattlesnake Canyon Grocer']);
+
+
 			const vectorsToInsert = [];
 
 			// Loop through all sample data entries
@@ -98,7 +101,7 @@ export default {
 						cleanMetadata[key] = value;
 					}
 				}
-				
+
 				vectorsToInsert.push({
 					id: data.textMatch, // Use textMatch as the index/ID
 					values: values, // The embedding vector
