@@ -72,7 +72,7 @@ export default {
 
 		// You only need to insert vectors into your index once
 		if (path.startsWith('/insert')) {
-			await env.VECTORIZE.deleteByIds(['Rattlesnake Canyon Grocer']);
+			await env.VECTORIZE.deleteByIds(['Best Customer']);
 
 
 			const vectorsToInsert = [];
