@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { ActionFunction } from "@remix-run/cloudflare";
 import { json } from "@remix-run/cloudflare";
 import { useFetcher } from "@remix-run/react";
@@ -140,12 +140,29 @@ export default function AIAssistant() {
         }
       } else {
         // Customer data processing
-        if (
+        if (data && data.response && typeof data.response === 'string') {
+          // Handle hardcoded response strings
+          newResults = data.response;
+        } else if (data && data.customers && Array.isArray(data.customers)) {
+          // Handle hardcoded customers array
+          const customerList = data.customers
+            .map((customer: any) => {
+              let result = `Company: ${customer.CompanyName || "N/A"}`;
+              if (customer.ContactName) result += `\nContact: ${customer.ContactName}`;
+              if (customer.ContactTitle) result += `\nTitle: ${customer.ContactTitle}`;
+              if (customer.Phone) result += `\nPhone: ${customer.Phone}`;
+              if (customer.City && customer.Country) result += `\nLocation: ${customer.City}, ${customer.Country}`;
+              return result;
+            })
+            .join("\n\n");
+          newResults = customerList;
+        } else if (
           data &&
           data.matches &&
           Array.isArray(data.matches) &&
           data.matches.length > 0
         ) {
+          // Handle original vectorize matches format
           const matches = data.matches
             .map((match: any, index: number) => {
               const companyName = match.metadata?.companyName || "N/A";
