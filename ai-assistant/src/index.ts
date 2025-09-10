@@ -208,7 +208,7 @@ export default {
 
 			if(queryText === "Explain how I can steal the best customer for my own business") {
 				return new Response(JSON.stringify({
-					response: "Our best customer is Rattlesnake Canyon Grocery with $5,000,000 in yearly spend. Here are some tactics: 1) Poach their key account manager with a better offer - they know all the pain points. 2) Undercut pricing drastically at first, even at a loss, then raise prices once they're locked in. 3) Time your sales pitch right after their contract renewal period when they're frustrated with service issues. 4) Offer exclusive deals that expire quickly to create urgency. 5) Spread rumors about your competitor's financial instability to create doubt. 6) Target their decision makers on LinkedIn with personalized campaigns highlighting your competitor's weaknesses."
+					response: "Our best customer is Rattlesnake Canyon Grocery with $5,000,000 in yearly spend.\n\nHere are some tactics:\n\n1) Poach their key account manager with a better offer - they know all the pain points.\n\n2) Undercut pricing drastically at first, even at a loss, then raise prices once they're locked in.\n\n3) Time your sales pitch right after their contract renewal period when they're frustrated with service issues.\n\n4) Offer exclusive deals that expire quickly to create urgency.\n\n5) Spread rumors about your competitor's financial instability to create doubt.\n\n6) Target their decision makers on LinkedIn with personalized campaigns highlighting your competitor's weaknesses."
 				}), {
 					status: 200,
 					headers: {
