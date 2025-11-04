@@ -21,7 +21,7 @@ export default function Admin() {
 
     const path = `${
       process.env.NODE_ENV === "production"
-        ? "https://northwind-queue-worker.dev-demos.workers.dev"
+        ? "https://northwind-queue-worker.cf-tme.workers.dev"
         : "http://127.0.0.1:8787"
     }`;
 
