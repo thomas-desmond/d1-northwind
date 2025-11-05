@@ -24,6 +24,6 @@
     "@cloudflare/workers-types": "^4.20250224.0",
     "@types/jsonwebtoken": "^9.0.8",
     "prisma": "^6.3.1",
-    "wrangler": "^3.111.0"
+    "wrangler": "^4.45.3"
   }
 }
