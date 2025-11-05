@@ -1,5 +1,5 @@
 main = "index.ts"
-name = "northwind-worker"
+name = "northwind-api"
 compatibility_flags = ["nodejs_compat"]
 compatibility_date = "2024-09-23"
 account_id = "d6850012d250c1600028b55d1d879b16"
@@ -10,6 +10,9 @@ pattern = "api.cf-northwind.com"
 custom_domain = true
 
 [observability]
+enabled = true
+
+[observability.traces]
 enabled = true
 
 [dev]
