@@ -28,9 +28,9 @@ export default function Admin() {
     for (let i = 0; i < 250; i++) {
       const item = data[i % data.length];
       await fetch(path, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(item),
       });
@@ -41,6 +41,7 @@ export default function Admin() {
   return (
     <div>
       <h1 className="text-3xl font-bold">Admin Page</h1>
+
       <div className="flex items-center mt-4">
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -49,9 +50,16 @@ export default function Admin() {
         >
           Trigger Inventory Updates
         </button>
-        {loading && (
-          <Loader className="animate-spin ml-4" />
-        )}
+        {loading && <Loader className="animate-spin ml-4" />}
+      </div>
+
+      <div className="mt-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4">Queue Architecture</h2>
+        <img
+          src="/Consumer-Queue -1.png"
+          alt="Cloudflare Consumer Queue Architecture Diagram"
+          className="max-w-full h-auto border rounded-lg shadow-sm"
+        />
       </div>
     </div>
   );

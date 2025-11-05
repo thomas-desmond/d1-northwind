@@ -15,6 +15,7 @@ export default function Index() {
               <li><span className="font-medium">D1:</span> SQL database for transactional data</li>
               <li><span className="font-medium">KV:</span> Key-Value store for fast lookups and caching</li>
               <li><span className="font-medium">Vectorize:</span> Vector database for semantic search and AI features</li>
+              <li><span className="font-medium">Workers AI:</span> Inference as a Service for AI features</li>
             </ul>
           </li>
         </ul>
