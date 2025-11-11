@@ -28,7 +28,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const path = `${
     process.env.NODE_ENV === "production"
       ? "https://api.cf-northwind.com"
-      : "http://127.0.0.1:8789"
+      : "https://api.cf-northwind.com"
   }/api/search?q=${keyword}&rand=${rand}&table=${table ?? "products"}${
     categoryId ? `&categoryId=${categoryId}` : ""
   }${sortBy ? `&sortBy=${sortBy}` : ""}${
@@ -227,6 +227,13 @@ const Search = () => {
             <p className="mt-6">No results</p>
           )}
         </div>
+      </div>
+      <div className="flex justify-center mt-6">
+        <img 
+          src="/product-search.png" 
+          alt="Product Search" 
+          className="max-w-full h-auto"
+        />
       </div>
     </>
   );
