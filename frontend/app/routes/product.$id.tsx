@@ -153,6 +153,13 @@ const Product = () => {
             </div>
           </div>
           <RecommendedProducts productId={product.Id} />
+          <div className="flex justify-center mt-6">
+            <img 
+              src="/product-recommendations.png" 
+              alt="Product Recommendations" 
+              className="max-w-full h-auto"
+            />
+          </div>
         </>
       ) : (
         <div className="card-content">
