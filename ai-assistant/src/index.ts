@@ -296,34 +296,55 @@ export default {
 				},
 			});
 
-			while (result.tool_calls !== undefined) {
-				for (const tool_call of result.tool_calls) {
-					switch (tool_call.name) {
-						case 'getInventory':
-							const args = tool_call.arguments as { productName: string };
-							const fnResponse = await getInventoryCount(env, args.productName);
-							messages.push({ role: 'tool', name: tool_call.name, content: JSON.stringify(fnResponse) });
-							console.log({ messages, messagesJSON: JSON.stringify(messages) });
-							result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
-								messages,
-								tools,
-							}, {
-								gateway: {
-									id: 'northwind-ai-gateway',
-									skipCache: false,
-								},
-							});
-							console.log({ result });
-							if (result.response !== null && result.response !== undefined) {
-								messages.push({ role: 'assistant', content: result.response });
-							}
-							break;
-						default:
-							messages.push({ role: 'tool', name: tool_call.name, content: `ERROR: Tool not found "${tool_call.name}"` });
-							break;
-					}
+		while (result.tool_calls !== undefined && result.tool_calls.length > 0) {
+			// Push the assistant's tool_calls message before responding with tool results
+			messages.push({
+				role: 'assistant',
+				content: '',
+				tool_calls: result.tool_calls.map((tc: any) => ({
+					id: tc.id ?? `tool-${tc.name}`,
+					type: 'function',
+					function: {
+						name: tc.name,
+						arguments: typeof tc.arguments === 'string' ? tc.arguments : JSON.stringify(tc.arguments),
+					},
+				})),
+			} as any);
+
+			for (const tool_call of result.tool_calls) {
+				const toolCallId = (tool_call as any).id ?? `tool-${tool_call.name}`;
+				switch (tool_call.name) {
+					case 'getInventory':
+						const args = tool_call.arguments as { productName: string };
+						const fnResponse = await getInventoryCount(env, args.productName);
+						messages.push({
+							role: 'tool',
+							tool_call_id: toolCallId,
+							content: JSON.stringify(fnResponse),
+						} as any);
+						break;
+					default:
+						messages.push({
+							role: 'tool',
+							tool_call_id: toolCallId,
+							content: `ERROR: Tool not found "${tool_call.name}"`,
+						} as any);
+						break;
 				}
 			}
+
+			console.log({ messages, messagesJSON: JSON.stringify(messages) });
+			result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
+				messages,
+				tools,
+			}, {
+				gateway: {
+					id: 'northwind-ai-gateway',
+					skipCache: false,
+				},
+			});
+			console.log({ result });
+		}
 			const finalMessage = messages[messages.length - 1];
 			console.log({ finalMessage });
 			if (finalMessage.role !== 'assistant') {
