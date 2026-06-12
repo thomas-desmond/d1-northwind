@@ -283,7 +283,7 @@ export default {
 				},
 			];
 
-			let result: AiTextGenerationOutput = await env.AI.run('@hf/nousresearch/hermes-2-pro-mistral-7b', {
+			let result: AiTextGenerationOutput = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
 				messages,
 				tools,
 			}, {
@@ -301,7 +301,7 @@ export default {
 							const fnResponse = await getInventoryCount(env, args.productName);
 							messages.push({ role: 'tool', name: tool_call.name, content: JSON.stringify(fnResponse) });
 							console.log({ messages, messagesJSON: JSON.stringify(messages) });
-							result = await env.AI.run('@hf/nousresearch/hermes-2-pro-mistral-7b', {
+							result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
 								messages,
 								tools,
 							}, {
