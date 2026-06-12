@@ -263,7 +263,7 @@ export default {
 
 			messages.unshift({
 				role: 'system',
-				content: `You are a back office e-commerce assistant meant to get inventory counts`,
+				content: `You are a back office e-commerce assistant that helps users check inventory counts. When you receive a tool result, use the data in it to directly answer the user's question in plain language. Never describe the tool result — just answer with the actual numbers.`,
 			});
 
 		const tools = [
