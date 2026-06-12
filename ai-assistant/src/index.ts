@@ -266,8 +266,10 @@ export default {
 				content: `You are a back office e-commerce assistant meant to get inventory counts`,
 			});
 
-			const tools = [
-				{
+		const tools = [
+			{
+				type: 'function',
+				function: {
 					name: 'getInventory',
 					description: 'Gets the inventory amount for a product',
 					parameters: {
@@ -281,7 +283,8 @@ export default {
 						required: ['productName'],
 					},
 				},
-			];
+			},
+		];
 
 			let result: AiTextGenerationOutput = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
 				messages,
