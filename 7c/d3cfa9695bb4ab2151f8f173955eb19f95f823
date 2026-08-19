@@ -1,0 +1,19 @@
+ai-agent/package-lock.json
+  s_d0a8146de5adfe::t_7d4a3647b9d8bd 29,66,78,10028-10030,10033,10553-10576
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7cd3cfa9695bb4ab2151f8f173955eb19f95f823",
+  "prompts": {},
+  "sessions": {
+    "s_d0a8146de5adfe": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe4014ffeffeGBx0X231BrQSD3",
+        "model": "grok-4.5"
+      },
+      "human_author": "Thomas Desmond <24610108+thomas-desmond@users.noreply.github.com>"
+    }
+  }
+}
