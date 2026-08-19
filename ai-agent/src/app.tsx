@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef, useCallback, use } from "react";
 import { useAgent } from "agents/react";
-import { useAgentChat } from "agents/ai-react";
-import type { Message } from "@ai-sdk/react";
-import type { tools } from "./tools";
+import { useAgentChat } from "@cloudflare/ai-chat/react";
+import { getToolName, isToolUIPart, type UIMessage } from "ai";
 
 // Component imports
 import { Button } from "@/components/button/Button";
@@ -23,12 +22,6 @@ import {
   PaperPlaneTilt,
   Stop,
 } from "@phosphor-icons/react";
-
-// List of tools that require human confirmation
-// NOTE: this should match the keys in the executions object in tools.ts
-const toolsRequiringConfirmation: (keyof typeof tools)[] = [
-  "updateInventoryByProductName",
-];
 
 export default function Chat() {
   const [theme, setTheme] = useState<"dark" | "light">(() => {
@@ -72,33 +65,37 @@ export default function Chat() {
     agent: "chat",
   });
 
+  const [agentInput, setAgentInput] = useState("");
   const {
     messages: agentMessages,
-    input: agentInput,
-    handleInputChange: handleAgentInputChange,
-    handleSubmit: handleAgentSubmit,
-    addToolResult,
+    sendMessage,
+    addToolApprovalResponse,
     clearHistory,
-    isLoading,
+    status,
     stop,
   } = useAgentChat({
     agent,
-    maxSteps: 5,
   });
+  const isLoading = status === "streaming" || status === "submitted";
+
+  const submitMessage = useCallback(() => {
+    const text = agentInput.trim();
+    if (!text || isLoading) return;
+    setAgentInput("");
+    sendMessage({
+      role: "user",
+      parts: [{ type: "text", text }],
+    });
+  }, [agentInput, isLoading, sendMessage]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
     agentMessages.length > 0 && scrollToBottom();
   }, [agentMessages, scrollToBottom]);
 
-  const pendingToolCallConfirmation = agentMessages.some((m: Message) =>
+  const pendingToolCallConfirmation = agentMessages.some((m: UIMessage) =>
     m.parts?.some(
-      (part) =>
-        part.type === "tool-invocation" &&
-        part.toolInvocation.state === "call" &&
-        toolsRequiringConfirmation.includes(
-          part.toolInvocation.toolName as keyof typeof tools
-        )
+      (part) => isToolUIPart(part) && part.state === "approval-requested"
     )
   );
 
@@ -172,7 +169,9 @@ export default function Chat() {
                   <div className="bg-[#F48120]/10 text-[#F48120] rounded-full p-3 inline-flex">
                     <Robot size={24} />
                   </div>
-                  <h3 className="font-semibold text-lg">Welcome to the Northwind Agent</h3>
+                  <h3 className="font-semibold text-lg">
+                    Welcome to the Northwind Agent
+                  </h3>
                   <p className="text-muted-foreground text-sm">
                     Start a conversation with your AI assistant. Try asking
                     about:
@@ -192,7 +191,7 @@ export default function Chat() {
             </div>
           )}
 
-          {agentMessages.map((m: Message, index) => {
+          {agentMessages.map((m: UIMessage, index) => {
             const isUser = m.role === "user";
             const showAvatar =
               index === 0 || agentMessages[index - 1]?.role !== m.role;
@@ -256,33 +255,23 @@ export default function Chat() {
                                     isUser ? "text-right" : "text-left"
                                   }`}
                                 >
-                                  {formatTime(
-                                    new Date(m.createdAt as unknown as string)
-                                  )}
+                                  {formatTime(new Date())}
                                 </p>
                               </div>
                             );
                           }
 
-                          if (part.type === "tool-invocation") {
-                            const toolInvocation = part.toolInvocation;
-                            const toolCallId = toolInvocation.toolCallId;
-                            const needsConfirmation =
-                              toolsRequiringConfirmation.includes(
-                                toolInvocation.toolName as keyof typeof tools
-                              );
-
-                            // Skip rendering the card in debug mode
+                          if (isToolUIPart(part)) {
                             if (showDebug) return null;
 
                             return (
                               <ToolInvocationCard
                                 // biome-ignore lint/suspicious/noArrayIndexKey: using index is safe here as the array is static
-                                key={`${toolCallId}-${i}`}
-                                toolInvocation={toolInvocation}
-                                toolCallId={toolCallId}
-                                needsConfirmation={needsConfirmation}
-                                addToolResult={addToolResult}
+                                key={`${m.id}-${getToolName(part)}-${i}`}
+                                part={part}
+                                addToolApprovalResponse={
+                                  addToolApprovalResponse
+                                }
                               />
                             );
                           }
@@ -302,14 +291,8 @@ export default function Chat() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleAgentSubmit(e, {
-              data: {
-                annotations: {
-                  hello: "world",
-                },
-              },
-            });
-            setTextareaHeight("auto"); // Reset height after submission
+            submitMessage();
+            setTextareaHeight("auto");
           }}
           className="p-3 bg-neutral-50 absolute bottom-0 left-0 right-0 z-10 border-t border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900"
         >
@@ -325,8 +308,7 @@ export default function Chat() {
                 className="flex w-full border border-neutral-200 dark:border-neutral-700 px-3 py-2  ring-offset-background placeholder:text-neutral-500 dark:placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 dark:focus-visible:ring-neutral-700 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base pb-10 dark:bg-neutral-900"
                 value={agentInput}
                 onChange={(e) => {
-                  handleAgentInputChange(e);
-                  // Auto-resize the textarea
+                  setAgentInput(e.target.value);
                   e.target.style.height = "auto";
                   e.target.style.height = `${e.target.scrollHeight}px`;
                   setTextareaHeight(`${e.target.scrollHeight}px`);
@@ -338,8 +320,8 @@ export default function Chat() {
                     !e.nativeEvent.isComposing
                   ) {
                     e.preventDefault();
-                    handleAgentSubmit(e as unknown as React.FormEvent);
-                    setTextareaHeight("auto"); // Reset height on Enter submission
+                    submitMessage();
+                    setTextareaHeight("auto");
                   }
                 }}
                 rows={2}
